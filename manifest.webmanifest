@@ -1,0 +1,16 @@
+{
+  "name": "しおりラボ",
+  "short_name": "しおりラボ",
+  "description": "スマホで書いて、PDFにして印刷できる旅のしおり作り",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FFF4E2",
+  "theme_color": "#FF9500",
+  "icons": [
+    {"src": "si1-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "si1-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "si1-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
