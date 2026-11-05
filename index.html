@@ -50,7 +50,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,label:focus-with
 .hero p{margin:0;color:var(--sub);font-size:14px}
 .marks{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
 .marks img{width:34px;height:34px}
-.sc{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:12px;align-items:center;background:#fff;border-radius:20px;padding:14px;box-shadow:0 3px 0 var(--line)}
+.sc{display:grid;grid-template-columns:56px minmax(0,1fr);gap:12px;align-items:center;background:#fff;border-radius:20px;padding:14px;box-shadow:0 3px 0 var(--line)}
 .sc .ic{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .sc .ic img{width:38px;height:38px}
 .sc .ic img.ph{width:100%;height:100%;object-fit:cover}
@@ -59,9 +59,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,label:focus-with
 .tag{display:inline-block;font-size:11px;font-weight:900;border-radius:999px;padding:1px 8px;background:var(--acc-l);color:var(--acc-d)}
 .tag.now{background:var(--leaf-l);color:var(--leaf-d)}.tag.gray{background:#EFE8DF;color:var(--sub)}
 .dots{display:inline-flex;gap:3px}.dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--leaf)}
-.sc .csw{align-self:start;border:2px solid var(--line);background:#fff;border-radius:999px;padding:3px 10px 3px 3px;display:flex;align-items:center;gap:5px;font-size:13px;font-weight:900;color:var(--sub)}.csw i{width:26px;height:26px;border-radius:50%;display:block;background:linear-gradient(135deg,var(--c) 0 58%,var(--c2) 58% 100%)}.csw[aria-expanded=true]{border-color:var(--acc)}
-.cpk{grid-column:1/-1;padding:10px 0 2px;border-top:2px dashed var(--line)}
-.ops{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
+.sc .ops{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
 .sc .ops .btn{height:42px;font-size:15px;padding:0 16px}
 .sc .ops .open{flex:1}
 .conf{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#FFF0F0;border-radius:14px;padding:10px 12px;font-weight:700;font-size:14px}
@@ -427,7 +425,7 @@ let saveT=0;
 function save(now){clearTimeout(saveT);const go=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('保存できませんでした。表紙の写真をやめるか、要らないしおりを消してね')}};now?go():(saveT=setTimeout(go,300))}
 
 /* ---------- state ---------- */
-let view='home',curId=null,step=0,delId=null,pickRow=null,cpickId=null,lp=null,lastPdf=null,lastSheets=null,deferredInstall=null,canShareFiles=false;
+let view='home',curId=null,step=0,delId=null,pickRow=null,lp=null,lastPdf=null,lastSheets=null,deferredInstall=null,canShareFiles=false;
 try{canShareFiles=!!(navigator.canShare&&navigator.canShare({files:[new File(['x'],'a.pdf',{type:'application/pdf'})]}))}catch(e){}
 const cur=()=>db.list.find(x=>x.id===curId);
 function dirty(){lastPdf=null;lastSheets=null}
@@ -445,7 +443,7 @@ function homeHTML(){
  <button class="btn big" data-act="new">新しいしおりを作る</button>${deferredInstall&&db.hintDone?'<button class="btn ghost" data-act="install">ホーム画面に追加</button>':''}</div>
  ${hintHTML()}
  ${list.filter(s=>grp(s)<2).map(cardHTML).join('')}${(()=>{const past=list.filter(s=>grp(s)===2);return past.length?`<button class="pastbtn" data-act="togglePast" aria-expanded="${!!db.showPast}"><span>終わった旅（${past.length}）</span><em>${db.showPast?'閉じる':'開く'}</em></button>${db.showPast?past.map(cardHTML).join(''):''}`:''})()}
- <div class="card"><h3>色を選ぼう</h3><p class="note">アプリと、新しく作るしおりの色になるよ。しおりごとの色は、それぞれの「色」で変えられるよ。</p><div class="thpick"><div class="colors">${Object.entries(TH).map(([k,v])=>`<button class="cl ${db.theme===k?'on':''}" data-act="theme" data-v="${k}" style="--c:${v[0]};--c2:${v[6]}" aria-pressed="${db.theme===k}"><i></i>${v[3]}</button>`).join('')}</div><div class="thpv" aria-label="表紙の見本"><div class="pvz">${pageHTML(Object.assign({},list[0]||sample(),{theme:db.theme}),'cover','a5',1,8)}</div></div></div></div>
+ <div class="card"><h3>色を選ぼう</h3><p class="note">アプリと、新しく作るしおりの色になるよ。しおりごとの色は、しおりの表紙の画面で変えられるよ。</p><div class="thpick"><div class="colors">${Object.entries(TH).map(([k,v])=>`<button class="cl ${db.theme===k?'on':''}" data-act="theme" data-v="${k}" style="--c:${v[0]};--c2:${v[6]}" aria-pressed="${db.theme===k}"><i></i>${v[3]}</button>`).join('')}</div><div class="thpv" aria-label="表紙の見本"><div class="pvz">${pageHTML(Object.assign({},list[0]||sample(),{theme:db.theme}),'cover','a5',1,8)}</div></div></div></div>
  <div class="card"><h3>バックアップ</h3><p class="note">スマホを替える時や、もしもの時のために、しおりをファイルに保存しておけます。読み込むと、同じしおりは新しい方に入れ替わります。</p><div class="row2" style="grid-template-columns:1fr 1fr"><button class="btn ghost" data-act="exportAll">書き出す</button><label class="btn ghost pick">読み込む<input type="file" accept=".json,application/json" data-import id="f-import"></label></div></div>
  </div>`;
 }
@@ -455,7 +453,7 @@ function hintHTML(){if(db.hintDone)return '';if(isStandalone()){db.hintDone=true
 function cardHTML(s){
  const v=th(s),t=stC(v),tl=v[2];const n=[0,1,2,3,4].filter(i=>done(s,i)).length;
  return `<div class="sc"><div class="ic" style="background:${tl}">${s.coverMode==='photo'&&s.cover?`<img class="ph" src="${s.cover}" alt="">`:`<img src="${icon(s.icons[0],t,tl)}" alt="">`}</div>
- <div style="min-width:0"><b>${esc(s.title||s.dest||'名前のないしおり')}</b><div class="meta">${s.sample?'<span class="tag">見本</span>':''}${statusTag(s)}<span>${dateRange(s)||'日にち未定'}</span><span class="dots" aria-label="${n}/5">${[0,1,2,3,4].map(i=>`<i class="${done(s,i)?'on':''}"></i>`).join('')}</span></div></div><button class="csw" data-act="cpick" data-id="${s.id}" aria-expanded="${cpickId===s.id}" aria-label="このしおりの色を変える"><i style="--c:${v[0]};--c2:${v[6]}"></i>色</button>${cpickId===s.id?`<div class="cpk"><div class="colors">${Object.entries(TH).map(([k,w])=>`<button class="cl ${s.theme===k?'on':''}" data-act="cardTheme" data-id="${s.id}" data-v="${k}" style="--c:${w[0]};--c2:${w[6]}" aria-pressed="${s.theme===k}"><i></i>${w[3]}</button>`).join('')}</div></div>`:''}
+ <div style="min-width:0"><b>${esc(s.title||s.dest||'名前のないしおり')}</b><div class="meta">${s.sample?'<span class="tag">見本</span>':''}${statusTag(s)}<span>${dateRange(s)||'日にち未定'}</span><span class="dots" aria-label="${n}/5">${[0,1,2,3,4].map(i=>`<i class="${done(s,i)?'on':''}"></i>`).join('')}</span></div></div>
  ${delId===s.id?`<div class="conf"><span style="flex:1">${s.sample?'見本を消す？（新しいしおりは空から始まるようになるよ）':'このしおりを消す？'}</span><button class="btn red" data-act="delYes">消す</button><button class="btn ghost" data-act="delNo">やめる</button></div>`:
  `<div class="ops">${s.sample?`<button class="btn green open" data-act="fromSample" data-id="${s.id}">この見本で作る</button><button class="btn ghost" data-act="open" data-id="${s.id}">直す</button>`:`<button class="btn open" data-act="open" data-id="${s.id}">開く</button><button class="btn ghost" data-act="copy" data-id="${s.id}">コピー</button>`}<button class="btn ghost" data-act="del" data-id="${s.id}">消す</button></div>${s.sample?'<p class="snote">新しいしおりは、この見本の作った人・一緒に行く人・持ち物・約束・表紙の絵から始まるよ。</p>':''}`}</div>`;
 }
@@ -650,7 +648,7 @@ function render(){
 }
 function sizePreviews(){if(zi>=0)sizeZoom();document.querySelectorAll('.pvz').forEach(z=>{const box=z.parentElement,pg=z.firstElementChild;if(!pg)return;z.style.zoom=box.clientWidth/pg.offsetWidth})}
 addEventListener('resize',()=>{clearTimeout(sizePreviews.t);sizePreviews.t=setTimeout(sizePreviews,150)});
-function go(v,st){view=v;pickRow=null;cpickId=null;if(st!==undefined)step=st;render();window.scrollTo(0,0)}
+function go(v,st){view=v;pickRow=null;if(st!==undefined)step=st;render();window.scrollTo(0,0)}
 function setPath(o,path,val){const k=path.split('.');let x=o;for(let i=0;i<k.length-1;i++)x=x[k[i]];x[k[k.length-1]]=val}
 function onPhoto(inp){
  const f=inp.files&&inp.files[0];if(!f)return;const url=URL.createObjectURL(f),im=new Image();
@@ -683,8 +681,6 @@ const A={
  exportAll(){try{const name='しおりラボ_バックアップ_'+today().replace(/-/g,'')+'.json',url=URL.createObjectURL(new Blob([JSON.stringify({app:'shiorilab',v:1,exported:new Date().toISOString(),list:db.list,customItems:db.customItems,theme:db.theme})],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);toast('書き出しました（ダウンロードの中にあるよ）')}catch(e){toast('書き出せませんでした')}},
  coverMode(b){const s=cur();s.coverMode=b.dataset.v;touch(s);render()},
  sTheme(b){const x=cur();if(!x)return;x.theme=b.dataset.v;touch(x);render()},
- cpick(b){cpickId=cpickId===b.dataset.id?null:b.dataset.id;render()},
- cardTheme(b){const x=db.list.find(o=>o.id===b.dataset.id);if(!x)return;x.theme=b.dataset.v;cpickId=null;touch(x);render()},
  pickIc(b){const k=b.dataset.d+'-'+b.dataset.i;pickRow=pickRow===k?null:k;render()},
  setIc(b){const s=cur(),x=s.days[+b.dataset.d].items[+b.dataset.i],v=b.dataset.v;if(x){if(v==='auto'){x.icm=false;x.ic=autoIc(x.place)}else{x.icm=true;x.ic=v||''}}pickRow=null;touch(s);render()},
  icon(b){const s=cur(),k=b.dataset.v,i=s.icons.indexOf(k);if(i>=0){if(s.icons.length===1){toast('1つは選んでね');return}s.icons.splice(i,1)}else{if(s.icons.length>=ICON_MAX){toast('表紙の絵は'+ICON_MAX+'つまでだよ');return}s.icons.push(k)}s.icon=s.icons[0];touch(s);render()},
