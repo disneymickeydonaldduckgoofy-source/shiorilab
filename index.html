@@ -69,7 +69,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,label:focus-with
 .btn.red{background:var(--danger);color:#fff;box-shadow:0 4px 0 #A82E33}
 .hintc{background:var(--hint-bg);box-shadow:0 3px 0 var(--hint-sh)}.hl{margin:0;padding-left:1.2em;display:grid;gap:4px;font-size:15px}
 .pastbtn{display:flex;justify-content:space-between;align-items:center;border:2px solid var(--line);background:#fff;border-radius:16px;padding:12px 16px;font-weight:900;font-size:15px;color:var(--sub)}.pastbtn em{font-style:normal;font-size:13px;color:var(--acc-d)}
-.rs{grid-column:1/-1;justify-self:start;font-size:13px;padding:2px 0}
+.snote{grid-column:1/-1;margin:0;font-size:12px;line-height:1.5;color:var(--sub)}
 .link{border:0;background:none;color:var(--acc-d);font-weight:900;font-size:15px;padding:8px 0;text-align:left;text-decoration:underline;text-underline-offset:4px}
 /* steps */
 .steps{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;padding-top:14px}
@@ -427,7 +427,7 @@ let saveT=0;
 function save(now){clearTimeout(saveT);const go=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('保存できませんでした。表紙の写真をやめるか、要らないしおりを消してね')}};now?go():(saveT=setTimeout(go,300))}
 
 /* ---------- state ---------- */
-let view='home',curId=null,step=0,delId=null,resetAsk=false,pickRow=null,cpickId=null,lp=null,lastPdf=null,lastSheets=null,deferredInstall=null,canShareFiles=false;
+let view='home',curId=null,step=0,delId=null,pickRow=null,cpickId=null,lp=null,lastPdf=null,lastSheets=null,deferredInstall=null,canShareFiles=false;
 try{canShareFiles=!!(navigator.canShare&&navigator.canShare({files:[new File(['x'],'a.pdf',{type:'application/pdf'})]}))}catch(e){}
 const cur=()=>db.list.find(x=>x.id===curId);
 function dirty(){lastPdf=null;lastSheets=null}
@@ -456,8 +456,8 @@ function cardHTML(s){
  const v=th(s),t=stC(v),tl=v[2];const n=[0,1,2,3,4].filter(i=>done(s,i)).length;
  return `<div class="sc"><div class="ic" style="background:${tl}">${s.coverMode==='photo'&&s.cover?`<img class="ph" src="${s.cover}" alt="">`:`<img src="${icon(s.icons[0],t,tl)}" alt="">`}</div>
  <div style="min-width:0"><b>${esc(s.title||s.dest||'名前のないしおり')}</b><div class="meta">${s.sample?'<span class="tag">見本</span>':''}${statusTag(s)}<span>${dateRange(s)||'日にち未定'}</span><span class="dots" aria-label="${n}/5">${[0,1,2,3,4].map(i=>`<i class="${done(s,i)?'on':''}"></i>`).join('')}</span></div></div><button class="csw" data-act="cpick" data-id="${s.id}" aria-expanded="${cpickId===s.id}" aria-label="このしおりの色を変える"><i style="--c:${v[0]};--c2:${v[6]}"></i>色</button>${cpickId===s.id?`<div class="cpk"><div class="colors">${Object.entries(TH).map(([k,w])=>`<button class="cl ${s.theme===k?'on':''}" data-act="cardTheme" data-id="${s.id}" data-v="${k}" style="--c:${w[0]};--c2:${w[6]}" aria-pressed="${s.theme===k}"><i></i>${w[3]}</button>`).join('')}</div></div>`:''}
- ${delId===s.id?`<div class="conf"><span style="flex:1">${s.sample?'見本を消す？（「最初の見本に戻す」で戻せなくなるよ）':'このしおりを消す？'}</span><button class="btn red" data-act="delYes">消す</button><button class="btn ghost" data-act="delNo">やめる</button></div>`:s.sample&&resetAsk?`<div class="conf"><span style="flex:1">直した見本を、最初の内容に戻す？</span><button class="btn red" data-act="resetYes">戻す</button><button class="btn ghost" data-act="resetNo">やめる</button></div>`:
- `<div class="ops">${s.sample?`<button class="btn green open" data-act="fromSample" data-id="${s.id}">この見本で作る</button><button class="btn ghost" data-act="open" data-id="${s.id}">直す</button>`:`<button class="btn open" data-act="open" data-id="${s.id}">開く</button><button class="btn ghost" data-act="copy" data-id="${s.id}">コピー</button>`}<button class="btn ghost" data-act="del" data-id="${s.id}">消す</button></div>${s.sample&&s.own?'<button class="link rs" data-act="resetAsk">最初の見本に戻す</button>':''}`}</div>`;
+ ${delId===s.id?`<div class="conf"><span style="flex:1">${s.sample?'見本を消す？（新しいしおりは空から始まるようになるよ）':'このしおりを消す？'}</span><button class="btn red" data-act="delYes">消す</button><button class="btn ghost" data-act="delNo">やめる</button></div>`:
+ `<div class="ops">${s.sample?`<button class="btn green open" data-act="fromSample" data-id="${s.id}">この見本で作る</button><button class="btn ghost" data-act="open" data-id="${s.id}">直す</button>`:`<button class="btn open" data-act="open" data-id="${s.id}">開く</button><button class="btn ghost" data-act="copy" data-id="${s.id}">コピー</button>`}<button class="btn ghost" data-act="del" data-id="${s.id}">消す</button></div>${s.sample?'<p class="snote">新しいしおりは、この見本の作った人・一緒に行く人・持ち物・約束・表紙の絵から始まるよ。</p>':''}`}</div>`;
 }
 function editHTML(){
  const s=cur();
@@ -664,7 +664,7 @@ function onImport(inp){const f=inp.files&&inp.files[0];if(!f)return;const rd=new
   save(true);render();toast('読み込みました（新規'+add+'件・入れ替え'+up+'こ）')}catch(e){toast('このファイルは読み込めませんでした')}inp.value=''};
  rd.onerror=()=>toast('このファイルは読み込めませんでした');rd.readAsText(f)}
 const A={
- new(){const s=norm({author:db.lastAuthor||'',theme:db.theme});s.updated=Date.now();db.list.push(s);save(true);curId=s.id;dirty();go('edit',0)},
+ new(){const m=db.list.find(x=>x.sample),c=m?JSON.parse(JSON.stringify({members:m.members,items:m.items,itemCat:m.itemCat,promises:m.promises,icons:m.icons})):{};const s=norm(Object.assign(c,{author:m&&m.author&&m.author!=='見本'?m.author:(db.lastAuthor||''),theme:db.theme}));s.updated=Date.now();db.list.push(s);save(true);curId=s.id;dirty();go('edit',0)},
  open(b){curId=b.dataset.id;dirty();go('edit',0)},
  copy(b){const o=db.list.find(x=>x.id===b.dataset.id);if(!o)return;const s=norm(JSON.parse(JSON.stringify(o)));s.id=uid();s.sample=false;delete s.sv;delete s.own;s.title=(o.title||o.dest||'しおり')+'（コピー）';s.updated=Date.now();db.list.push(s);save(true);render();toast('コピーしました')},
  del(b){delId=b.dataset.id;render()},
@@ -673,8 +673,6 @@ const A={
  togglePast(){db.showPast=!db.showPast;save(true);render()},
  delYes(){db.list=db.list.filter(x=>x.id!==delId);delId=null;save(true);render()},
  delNo(){delId=null;render()},
- resetAsk(){resetAsk=true;render()},resetNo(){resetAsk=false;render()},
- resetYes(){resetAsk=false;const i=db.list.findIndex(x=>x.sample);const n=sample();if(i>=0)db.list[i]=n;else db.list.unshift(n);save(true);render();toast('見本を最初の内容に戻しました')},
  home(){delId=null;go('home')},
  step(b){go('edit',+b.dataset.i)},
  next(){go('edit',Math.min(5,step+1))},
