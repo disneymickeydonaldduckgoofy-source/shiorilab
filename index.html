@@ -164,6 +164,16 @@ input[type=date],input[type=time]{min-height:50px}
 .todo button{border:0;background:#fff;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:900;color:var(--danger);box-shadow:0 2px 0 #F3D0D0}
 .pvgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 12px}
 .pv{margin:0;min-width:0}
+@media (min-width:1080px){
+#app.wide{max-width:1100px}
+#app.wide #view{display:grid;grid-template-columns:minmax(0,600px) minmax(0,1fr);column-gap:32px;align-items:start}
+#app.wide #view>.bar{grid-column:1/-1}
+#app.wide #view>.steps,#app.wide #view>.main{grid-column:1}
+#app.wide #side{grid-column:2;grid-row:2/4;position:sticky;top:calc(env(safe-area-inset-top,0px) + 72px);max-height:calc(100vh - 92px);overflow:auto;padding:14px 6px 24px;display:grid;gap:12px;align-content:start}
+#app.wide .navb{left:max(0px,calc(50% - 550px));transform:none;width:632px}
+}
+.sideh{font-weight:900;font-size:16px;display:grid;gap:2px}.sideh small{font-size:12px;font-weight:700;color:var(--sub)}
+.sidep{display:grid;gap:14px}
 .pvbox{display:block;width:100%;border:0;padding:0;cursor:zoom-in;aspect-ratio:148/210;overflow:hidden;border-radius:6px;box-shadow:0 2px 10px rgba(90,60,30,.16);background:#fff;max-width:100%}
 .pv figcaption{font-size:12px;text-align:center;color:var(--sub);margin-top:6px;font-weight:700}
 .res{display:grid;gap:12px}
@@ -642,10 +652,17 @@ async function sharePdf(){if(!lastPdf)return;try{await navigator.share({files:[l
 /* ---------- ui helpers ---------- */
 function busy(t){const b=$('#busy');if(t===false){b.hidden=true;return}b.hidden=false;$('#busyt').textContent=t}
 let toastT=0;function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,3200)}
+const WIDE=matchMedia('(min-width:1080px)');
+function sideKeys(s,pl){const want=step===1?pl.filter(k=>/^d\d$/.test(k)):step===2?['study','back']:step===3?['items']:step===4?['promise']:['cover'];return want.map(k=>[k,pl.indexOf(k)]).filter(x=>x[1]>=0)}
+function sideInner(s){const pl=pageList(s,s.format);return sideKeys(s,pl).map(([k,i])=>`<figure class="pv"><button class="pvbox" data-act="zoom" data-i="${i}" aria-label="${pgLabel(i,pl.length)}を大きく見る"><div class="pvz">${pageHTML(s,k,s.format,i+1,pl.length)}</div></button><figcaption>${pgLabel(i,pl.length)}</figcaption></figure>`).join('')}
+function sideHTML(){const s=cur();return `<aside id="side" aria-label="出来上がりの見本"><div class="sideh">出来上がりの見本<small>書いたらすぐ変わるよ。タップすると大きく見られるよ</small></div><div class="sidep">${sideInner(s)}</div></aside>`}
+let sideT=0;function refreshSide(){clearTimeout(sideT);sideT=setTimeout(()=>{const a=document.querySelector('#side .sidep'),s=cur();if(!a||!s)return;a.innerHTML=sideInner(s);sizePreviews()},250)}
+WIDE.addEventListener&&WIDE.addEventListener('change',()=>{if(view==='edit')render()});
 function render(){
  applyTheme();const v=$('#view');
  if(view==='edit'&&!cur())view='home';
- v.innerHTML=view==='home'?homeHTML():editHTML();
+ const wide=view==='edit'&&WIDE.matches;$('#app').classList.toggle('wide',wide);
+ v.innerHTML=view==='home'?homeHTML():editHTML()+(wide?sideHTML():'');
  sizePreviews();
 }
 function sizePreviews(){if(zi>=0)sizeZoom();document.querySelectorAll('.pvz').forEach(z=>{const box=z.parentElement,pg=z.firstElementChild;if(!pg)return;z.style.zoom=box.clientWidth/pg.offsetWidth})}
@@ -713,7 +730,7 @@ document.addEventListener('pointerup',lpEnd);document.addEventListener('pointerc
 document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('.sel'))e.preventDefault()});
 document.addEventListener('click',e=>{if(zi>=0&&e.target.matches('#zoom,.zin,.zbox')){closeZoom();return}const b=e.target.closest('[data-act]');if(!b||b.disabled)return;const fn=A[b.dataset.act];if(fn){e.preventDefault();fn(b)}});
 document.addEventListener('input',e=>{const t=e.target;
- if(t.dataset.f!==undefined){const s=cur();if(!s)return;setPath(s,t.dataset.f,t.value);if(t.dataset.f==='author')db.lastAuthor=t.value;touch(s);
+ if(t.dataset.f!==undefined){const s=cur();if(!s)return;setPath(s,t.dataset.f,t.value);if(t.dataset.f==='author')db.lastAuthor=t.value;touch(s);refreshSide();
   const m=/^days\.(\d)\.items\.(\d+)\.place$/.exec(t.dataset.f);if(m){const x=s.days[+m[1]].items[+m[2]];if(x&&!x.icm){const k=autoIc(x.place);if(k!==x.ic){x.ic=k;const b=document.querySelector(`[data-act=pickIc][data-d="${m[1]}"][data-i="${m[2]}"]`);if(b){const v=th(s);b.innerHTML=picInner(x,stC(v),v[2]);b.classList.toggle('on',!!k)}}}}
   if(t.dataset.f==='title'||t.dataset.f==='dest'){const bt=$('#bar-t');if(bt)bt.textContent=s.title||s.dest||'新しいしおり'}}});
 document.addEventListener('change',e=>{const t=e.target;if(t.matches('[data-photo]'))return onPhoto(t);if(t.matches('[data-import]'))return onImport(t);if(t.dataset.cat!==undefined){const s=cur();if(s){s.itemCat[t.dataset.cat]=+t.value;db.customItems[t.dataset.cat]=+t.value;touch(s)}return}if(t.hasAttribute('data-rr'))render()});
