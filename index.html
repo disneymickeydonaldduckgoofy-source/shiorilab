@@ -50,7 +50,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,label:focus-with
 .hero p{margin:0;color:var(--sub);font-size:14px}
 .marks{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
 .marks img{width:34px;height:34px}
-.sc{display:grid;grid-template-columns:56px minmax(0,1fr);gap:12px;align-items:center;background:#fff;border-radius:20px;padding:14px;box-shadow:0 3px 0 var(--line)}
+.sc{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:12px;align-items:center;background:#fff;border-radius:20px;padding:14px;box-shadow:0 3px 0 var(--line)}
 .sc .ic{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .sc .ic img{width:38px;height:38px}
 .sc .ic img.ph{width:100%;height:100%;object-fit:cover}
@@ -59,6 +59,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,label:focus-with
 .tag{display:inline-block;font-size:11px;font-weight:900;border-radius:999px;padding:1px 8px;background:var(--acc-l);color:var(--acc-d)}
 .tag.now{background:var(--leaf-l);color:var(--leaf-d)}.tag.gray{background:#EFE8DF;color:var(--sub)}
 .dots{display:inline-flex;gap:3px}.dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--leaf)}
+.sc .csw{align-self:start;border:2px solid var(--line);background:#fff;border-radius:999px;padding:3px 10px 3px 3px;display:flex;align-items:center;gap:5px;font-size:12px;font-weight:900;color:var(--sub);white-space:nowrap}.csw i{width:24px;height:24px;border-radius:50%;display:block;background:linear-gradient(135deg,var(--c) 0 58%,var(--c2) 58% 100%)}
 .sc .ops{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
 .sc .ops .btn{height:42px;font-size:15px;padding:0 16px}
 .sc .ops .open{flex:1}
@@ -453,7 +454,7 @@ function hintHTML(){if(db.hintDone)return '';if(isStandalone()){db.hintDone=true
 function cardHTML(s){
  const v=th(s),t=stC(v),tl=v[2];const n=[0,1,2,3,4].filter(i=>done(s,i)).length;
  return `<div class="sc"><div class="ic" style="background:${tl}">${s.coverMode==='photo'&&s.cover?`<img class="ph" src="${s.cover}" alt="">`:`<img src="${icon(s.icons[0],t,tl)}" alt="">`}</div>
- <div style="min-width:0"><b>${esc(s.title||s.dest||'名前のないしおり')}</b><div class="meta">${s.sample?'<span class="tag">見本</span>':''}${statusTag(s)}<span>${dateRange(s)||'日にち未定'}</span><span class="dots" aria-label="${n}/5">${[0,1,2,3,4].map(i=>`<i class="${done(s,i)?'on':''}"></i>`).join('')}</span></div></div>
+ <div style="min-width:0"><b>${esc(s.title||s.dest||'名前のないしおり')}</b><div class="meta">${s.sample?'<span class="tag">見本</span>':''}${statusTag(s)}<span>${dateRange(s)||'日にち未定'}</span><span class="dots" aria-label="${n}/5">${[0,1,2,3,4].map(i=>`<i class="${done(s,i)?'on':''}"></i>`).join('')}</span></div></div><span class="csw" role="img" aria-label="しおりの色：${v[3]}"><i style="--c:${v[0]};--c2:${v[6]}"></i>${v[3]}</span>
  ${delId===s.id?`<div class="conf"><span style="flex:1">${s.sample?'見本を消す？（新しいしおりは空から始まるようになるよ）':'このしおりを消す？'}</span><button class="btn red" data-act="delYes">消す</button><button class="btn ghost" data-act="delNo">やめる</button></div>`:
  `<div class="ops">${s.sample?`<button class="btn green open" data-act="fromSample" data-id="${s.id}">この見本で作る</button><button class="btn ghost" data-act="open" data-id="${s.id}">直す</button>`:`<button class="btn open" data-act="open" data-id="${s.id}">開く</button><button class="btn ghost" data-act="copy" data-id="${s.id}">コピー</button>`}<button class="btn ghost" data-act="del" data-id="${s.id}">消す</button></div>${s.sample?'<p class="snote">新しいしおりは、この見本の作った人・一緒に行く人・持ち物・約束・表紙の絵から始まるよ。</p>':''}`}</div>`;
 }
