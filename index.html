@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F5B800">
+<meta name="shiori-version" content="20261105153935">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="si1-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="si1-180.png">
@@ -164,6 +165,7 @@ input[type=date],input[type=time]{min-height:50px}
 .todo button{border:0;background:#fff;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:900;color:var(--danger);box-shadow:0 2px 0 #F3D0D0}
 .pvgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 12px}
 .pv{margin:0;min-width:0}
+.upd{display:flex;gap:12px;align-items:center;justify-content:space-between;border:2px solid var(--acc)}.upd b{font-size:16px}.upd .note{margin:2px 0 0}.upd .btn{flex:none;height:46px;padding:0 18px;font-size:15px}
 .offw{display:flex;justify-content:flex-end;margin-bottom:-6px}.offc{font-size:12px;font-weight:900;border-radius:999px;padding:3px 10px 3px 8px;display:inline-flex;align-items:center;gap:6px}.offc::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}.offc.ok{background:var(--leaf-l);color:var(--leaf-d)}.offc.wait{background:#EFE8DF;color:var(--sub)}
 @media (min-width:1080px){
 #app.wide{max-width:1100px}
@@ -450,7 +452,7 @@ function barHome(){return `<header class="bar"><img class="logo" src="${logoIc()
 function homeHTML(){
  const td=today(),grp=s=>s.sample?1:(pd(s.start)&&endYmd(s)<td?2:0);
  const list=[...db.list].sort((a,b)=>grp(a)-grp(b)||(grp(a)===2?b.start.localeCompare(a.start):(b.ct||b.updated||0)-(a.ct||a.updated||0)));
- return barHome()+`<div class="main"><div class="offw"><span id="offc" class="offc" hidden></span></div>
+ return barHome()+`<div class="main"><div class="offw"><span id="offc" class="offc" hidden></span></div>${newVer?'<div class="card upd"><div><b>新しい版があります</b><p class="note">押すと、しおりはそのままで新しい版に切り替わるよ。</p></div><button class="btn" data-act="reloadApp">新しくする</button></div>':''}
  <div class="hero"><div class="marks">${HERO.map((k,i)=>{const v=th();return `<img src="${i%2?icon(k,v[6],v[8]):icon(k,stC(v),v[2])}" alt="">`}).join('')}</div>
  <h2>自分だけの<br>旅のしおりを作ろう</h2><p>スマホで書いたら、PDFにしてプリントできるよ</p>
  <button class="btn big" data-act="new">新しいしおりを作る</button>${deferredInstall&&db.hintDone?'<button class="btn ghost" data-act="install">ホーム画面に追加</button>':''}</div>
@@ -688,6 +690,7 @@ const A={
  open(b){curId=b.dataset.id;dirty();go('edit',0)},
  copy(b){const o=db.list.find(x=>x.id===b.dataset.id);if(!o)return;const s=norm(JSON.parse(JSON.stringify(o)));s.id=uid();s.sample=false;delete s.sv;delete s.own;s.title=(o.title||o.dest||'しおり')+'（コピー）';s.updated=s.ct=Date.now();db.list.push(s);save(true);render();toast('コピーしました')},
  del(b){delId=b.dataset.id;render()},
+ reloadApp(){save(true);location.reload()},
  hintDone(){db.hintDone=true;save(true);render()},
  fromSample(b){const o=db.list.find(x=>x.id===b.dataset.id);if(!o)return;const s=norm(JSON.parse(JSON.stringify(o)));s.id=uid();s.sample=false;delete s.sv;delete s.own;s.made=today();s.author=db.lastAuthor||'';s.theme=db.theme;s.updated=s.ct=Date.now();db.list.push(s);save(true);curId=s.id;dirty();go('edit',0);toast('見本をもとに新しいしおりを作りました')},
  togglePast(){db.showPast=!db.showPast;save(true);render()},
@@ -742,17 +745,21 @@ document.addEventListener('focusout',()=>setTimeout(()=>{if(!document.activeElem
 let tx=null;
 addEventListener('touchstart',e=>{if(zi<0||e.touches.length!==1)return;tx={x:e.touches[0].clientX,y:e.touches[0].clientY}},{passive:true});
 addEventListener('touchend',e=>{if(zi<0||!tx)return;const t=e.changedTouches[0],dx=t.clientX-tx.x,dy=t.clientY-tx.y;tx=null;if(Math.abs(dx)>50&&Math.abs(dy)<60)openZoom(zi+(dx<0?1:-1))},{passive:true});
-let offState='none';
+let offState='none',fontsDone=false,newVer=false;
 function updOff(){const e=document.getElementById('offc');if(!e)return;const on=navigator.onLine!==false;
  if(offState==='none'){e.hidden=true;return}
  e.hidden=false;e.className='offc '+(offState==='ready'?'ok':'wait');
- e.textContent=offState==='ready'?(on?'オフラインでも使えます':'オフラインで使っています'):(on?'オフライン用に準備中':'オフライン中（PDF作りなどは使えません）')}
-function chkOff(){try{Promise.all(['index.html',H2C,JSPDF].map(u=>caches.match(u))).then(a=>{offState=a.every(Boolean)?'ready':'prep';updOff();if(offState!=='ready')setTimeout(chkOff,3000)}).catch(()=>{})}catch(e){}}
+ e.textContent=offState==='ready'?(on?(fontsDone?'オフラインでも使えます':'オフラインでも使えます（文字を保存中）'):'オフラインで使っています'):(on?'オフライン用に準備中':'オフライン中（PDF作りなどは使えません）')}
+function chkOff(){try{Promise.all(['index.html',H2C,JSPDF,'fonts-done'].map(u=>caches.match(u))).then(a=>{offState=a.slice(0,3).every(Boolean)?'ready':'prep';fontsDone=!!a[3];updOff();if(offState!=='ready'||!fontsDone)setTimeout(chkOff,3000)}).catch(()=>{})}catch(e){}}
+function askFonts(){try{const c=navigator.serviceWorker.controller;if(c)c.postMessage({t:'fonts'})}catch(e){}}
 function offInit(){try{if(!('serviceWorker' in navigator)||!window.caches)return;
  navigator.serviceWorker.getRegistration().then(r=>{if(!r)return;offState='prep';updOff();
-  const warm=()=>{try{performance.getEntriesByType('resource').forEach(x=>{if(/fonts\.gstatic\.com/.test(x.name))fetch(x.name,{mode:'cors'}).catch(()=>{})})}catch(_){}chkOff()};
+  const warm=()=>{try{performance.getEntriesByType('resource').forEach(x=>{if(/fonts\.gstatic\.com/.test(x.name))fetch(x.name,{mode:'cors'}).catch(()=>{})})}catch(_){}askFonts();setTimeout(()=>{if(!fontsDone)askFonts()},60000);chkOff()};
   if(navigator.serviceWorker.controller)warm();else navigator.serviceWorker.addEventListener('controllerchange',warm,{once:true});
   chkOff()}).catch(()=>{})}catch(e){}}
+function chkVer(){try{const m=document.querySelector('meta[name=shiori-version]');if(!m||newVer||navigator.onLine===false)return;
+ fetch('./?vc='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{const x=/name="shiori-version" content="([^"]+)"/.exec(t);if(x&&x[1]!==m.content){newVer=true;if(view==='home')render()}}).catch(()=>{})}catch(e){}}
+addEventListener('load',()=>setTimeout(chkVer,4000));document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')chkVer()});
 addEventListener('online',updOff);addEventListener('offline',updOff);
 addEventListener('load',()=>setTimeout(offInit,600));
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;if(view==='home')render()});
