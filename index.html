@@ -138,6 +138,7 @@ input[type=date],input[type=time]{min-height:50px}
 .lst{display:grid;gap:6px}
 .li{display:flex;align-items:center;gap:10px;padding:6px 6px 6px 14px;background:var(--soft);border-radius:14px;min-width:0}
 .li span{flex:1;min-width:0;font-weight:700;overflow-wrap:anywhere}
+.qz{display:grid;gap:8px;padding:12px;background:var(--soft);border-radius:16px}.qz+.qz{margin-top:10px}.qzh{font-weight:900;color:var(--acc-d)}
 .qrow{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:center}
 .ql{width:28px;height:28px;border-radius:50%;border:2px solid var(--acc);color:var(--acc-d);font-weight:900;display:flex;align-items:center;justify-content:center;font-size:14px;box-sizing:border-box}
 .ans{border:2px solid var(--line);background:#fff;border-radius:12px;padding:8px 10px;font-size:13px;font-weight:700;color:var(--sub);white-space:nowrap}
@@ -240,10 +241,12 @@ body.typing .navb{display:none}
 .nt .src{flex:none;align-self:flex-start;font-style:normal;font-size:.68em;font-weight:900;color:var(--td);background:var(--tl);border-radius:1em;padding:.15em .6em;white-space:nowrap}
 .nt p{margin:0;flex:1;line-height:1.5;min-width:0}
 .nt .lns{flex:1}
-.quiz{display:flex;flex-direction:column;gap:.35em}
+.quiz{display:flex;flex-direction:column;gap:.45em}
+.pg.mini .notes{gap:.35em}.pg.mini .nt{padding:.3em .6em}.pg.mini .nt p{font-size:.84em;line-height:1.38}.pg.mini .quiz{gap:.2em}.pg.mini .q{font-size:.92em;line-height:1.3}.pg.mini .ch{min-height:1.45em;font-size:.92em}.qq{display:flex;flex-direction:column;gap:.15em}
+.q i{font-style:normal;font-weight:900;color:var(--td);margin-right:.45em}.q.bl{display:flex;align-items:flex-end}.q.bl .lns{flex:1}
 .q{margin:0;font-weight:700;font-size:1.08em}
-.chs{display:grid;gap:.25em}
-.ch{display:flex;gap:.6em;align-items:center;min-height:1.7em}
+.chs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.2em .6em}
+.ch{display:flex;gap:.4em;align-items:center;min-height:1.7em;min-width:0;line-height:1.25}
 .ch span{width:1.6em;height:1.6em;border-radius:50%;border:.15em solid var(--lf);color:var(--lfd);font-weight:900;display:flex;align-items:center;justify-content:center;flex:none;font-size:.85em}
 .lns{display:grid}
 .lns i{display:block;height:1.9em;border-bottom:.08em solid #DDD2C5}
@@ -281,6 +284,7 @@ body.typing .navb{display:none}
 .stars span{font-weight:900;color:var(--td);margin-right:.4em;font-size:.95em}
 .stars img{width:1.9em;height:1.9em}
 .ansbox{background:var(--tl);border-radius:.7em;padding:.5em .9em;font-weight:700}
+.ansbox div{display:flex;gap:.6em;align-items:baseline}.ansbox div+div{margin-top:.15em}.ansbox span{font-weight:900;color:var(--td);font-size:.9em}
 .ansbox b{color:var(--td);font-size:1.25em;font-weight:900}
 .memb{font-weight:700;border-bottom:.08em solid #E6DCD0;padding:.2em 0;min-height:1.9em}
 .diary{flex:1 1 0;min-height:0;display:grid;grid-auto-rows:1fr;gap:.6em}
@@ -346,7 +350,7 @@ const ICONS={
  shop:'<path d="M13 22h38l-3 35H16z" fill="F"/><path d="M24 28V18a8 8 0 0 1 16 0v10"/><path d="M32 46l-6-6a4 4 0 0 1 6-5 4 4 0 0 1 6 5z" fill="#fff"/>'
 };
 const MARKS=[['car','車'],['train','電車'],['bus','バス'],['plane','飛行機'],['ship','船'],['mountain','山'],['sea','海'],['flower','花'],['tent','キャンプ'],['onsen','温泉'],['hotel','ホテル'],['food','ごはん'],['castle','お城'],['museum','美術館'],['animal','動物'],['fish','水族館'],['wheel','遊園地'],['lantern','お祭り'],['soft','アイス'],['shop','お買い物']],MARK_SET=new Set(MARKS.map(m=>m[0])),ICON_MAX=4,HERO=['car','train','plane','onsen','mountain','sea','castle','tent'];
-const ITEM_SUG=[['毎日使う',['ハンカチ','ティッシュ','ウェットティッシュ','財布','水筒','マスク','しおり']],['着る物',['着替え','下着','靴下','パジャマ','上着','帽子','手袋','マフラー','水着']],['お風呂・身支度',['タオル','歯ブラシ','くし','ヘアゴム','日焼け止め']],['もしもの時',['絆創膏','酔い止め','雨傘','レインコート','虫除け','ビニール袋']],['遊び・記録',['カメラ','筆記用具','色鉛筆','ノート','本','ゲーム','スマホ','タブレット','充電器','お菓子','レジャーシート','ぬいぐるみ']]];
+const ITEM_SUG=[['毎日使う',['ハンカチ','ティッシュ','ウェットティッシュ','財布','水筒','マスク','しおり']],['着る物',['着替え','下着','靴下','パジャマ','上着','帽子','手袋','マフラー','水着']],['お風呂・身支度',['タオル','歯ブラシ','くし','ヘアゴム','日焼け止め']],['もしもの時',['絆創膏','雨傘','レインコート','虫除け','ビニール袋']],['遊び・記録',['カメラ','望遠鏡','筆記用具','色鉛筆','ノート','本','ゲーム','スマホ','タブレット','充電器','お菓子','レジャーシート','ぬいぐるみ']]];
 const PROM_SUG=[['安全',['車ではシートベルトをする','道路に飛び出さない','大人から離れない','迷子になったらその場で待つ','知らない人について行かない']],['マナー',['挨拶をする','「ありがとう」を言う','お店の中では走らない','電車やバスでは静かにする','温泉では静かにする','お店の物に勝手に触らない','ゴミは持ち帰る']],['自分のこと',['時間を守る','自分の荷物は自分で持つ','お小遣いの中で買い物をする','好き嫌いせずに食べる','早寝早起きをする','泊まる部屋を散らかさない','手をこまめに洗う']]];
 const CATS=[...ITEM_SUG.map(g=>g[0]),'その他'],SUG_SET=new Set(ITEM_SUG.flatMap(g=>g[1]));let lastCat=CATS.length-1;
 const itemCat=(s,x)=>{const g=ITEM_SUG.findIndex(g=>g[1].includes(x));return g>=0?g:(s.itemCat[x]??CATS.length-1)};
@@ -406,13 +410,14 @@ function pageList(s,mode){const days=Array.from({length:s.nights+1},(_,i)=>'d'+i
 const REN={"水とう": "水筒", "さいふ": "財布", "着がえ": "着替え", "くつ下": "靴下", "ぼうし": "帽子", "手ぶくろ": "手袋", "ばんそうこう": "絆創膏", "雨がさ": "雨傘", "かっぱ": "レインコート", "虫よけ": "虫除け", "ビニールぶくろ": "ビニール袋", "色えんぴつ": "色鉛筆", "大人からはなれない": "大人から離れない", "まいごになったらその場で待つ": "迷子になったらその場で待つ", "知らない人についていかない": "知らない人について行かない", "あいさつをする": "挨拶をする", "電車やバスではしずかにする": "電車やバスでは静かにする", "温泉ではしずかにする": "温泉では静かにする", "お店の物に勝手にさわらない": "お店の物に勝手に触らない", "時間をまもる": "時間を守る", "おこづかいの中で買い物をする": "お小遣いの中で買い物をする", "好ききらいせずに食べる": "好き嫌いせずに食べる", "早ね早おきをする": "早寝早起きをする", "泊まる部屋をちらかさない": "泊まる部屋を散らかさない"};
 const renArr=a=>[...new Set((a||[]).map(x=>REN[x]||x))];
 function norm(o){
- const s=Object.assign({id:uid(),made:today(),title:'',dest:'',start:'',nights:1,stay:'',author:'',members:'',theme:'yuzu',icon:'car',icons:null,cover:'',coverMode:'icon',format:'a5',days:[],research:[],quiz:{},items:[],budget:'',wants:[],promises:[],itemCat:{},sample:false},o||{});
+ const s=Object.assign({id:uid(),made:today(),title:'',dest:'',start:'',nights:1,stay:'',author:'',members:'',theme:'yuzu',icon:'car',icons:null,cover:'',coverMode:'icon',format:'a5',days:[],research:[],quizzes:null,items:[],budget:'',wants:[],promises:[],itemCat:{},sample:false},o||{});
  if(!s.itemCat||typeof s.itemCat!=='object'||Array.isArray(s.itemCat))s.itemCat={};
  s.items=renArr(s.items);s.promises=renArr(s.promises);for(const k in s.itemCat)if(REN[k]){s.itemCat[REN[k]]=s.itemCat[k];delete s.itemCat[k]}
  s.days=[0,1,2,3].map(i=>({items:((s.days[i]||{}).items||[]).map(x=>(o=>(o.icm?o:(o.ic=autoIc(o.place),o)))({time:x.time||'',place:x.place||'',what:x.what||'',ic:MARK_SET.has(x.ic)?x.ic:'',icm:x.icm!=null?!!x.icm:!!x.ic}))}));
  s.research=[0,1,2].map(i=>s.research[i]||'');
  s.researchSrc=[0,1,2].map(i=>(s.researchSrc||[])[i]||'');
- s.quiz={q:s.quiz.q||'',c:[0,1,2].map(i=>(s.quiz.c||[])[i]||''),a:+s.quiz.a||0};
+ if(!Array.isArray(s.quizzes))s.quizzes=[s.quiz||{}];delete s.quiz;
+ s.quizzes=[0,1,2].map(n=>{const q=s.quizzes[n]||{};return {q:q.q||'',c:[0,1,2].map(i=>(q.c||[])[i]||''),a:Math.max(0,Math.min(2,+q.a||0))}});
  s.nights=Math.max(0,Math.min(3,parseInt(s.nights,10)||0));
  s.stays=[0,1,2].map(i=>String((s.stays||[])[i]??(i===0?s.stay||'':'')));
  if(!TH[s.theme])s.theme='yuzu';
@@ -420,18 +425,18 @@ function norm(o){
  if(!LIM[s.format])s.format='a5';
  return s;
 }
-function sample(){return norm({id:'sample',sample:true,sv:7,made:'2026-11-05',title:'新冠温泉の旅',dest:'新冠温泉',start:'2026-11-07',nights:1,stays:['新冠温泉 ホテルヒルズ'],author:'見本',members:'パパ、ママ、私',theme:'yuzu',icons:['onsen','animal','car'],
+function sample(){return norm({id:'sample',sample:true,sv:8,made:'2026-11-05',title:'新冠温泉の旅',dest:'新冠温泉',start:'2026-11-07',nights:1,stays:['新冠温泉 ホテルヒルズ'],author:'見本',members:'パパ、ママ、私',theme:'yuzu',icons:['onsen','animal','car'],
  days:[{items:[{time:'08:00',place:'家',what:'車で出発',ic:'car'},{time:'09:15',place:'道の駅 むかわ四季の館',what:''},{time:'09:50',place:'おひさま牧場',what:'ミニチュアホースとふれあう',ic:'animal'},{time:'10:40',place:'レストランメルシー',what:'昼ごはん（オムライス・ハンバーグ）'},{time:'12:45',place:'太陽の森ディマシオ美術館',what:'美術館とガラスの美術館を見る'},{time:'14:30',place:'道の駅 サラブレッドロード新冠',what:'馬グッズ・ピーマンソフト',ic:'soft'},{time:'14:55',place:'新冠温泉 ホテルヒルズ',what:'着く（チェックイン 15:00）',ic:'onsen'}]},
   {items:[{time:'10:00',place:'新冠温泉 ホテルヒルズ',what:'チェックアウトして出発'},{time:'11:35',place:'道の駅あびらD51ステーション',what:'SLの展示・ポッポらんど',ic:'train'},{time:'12:00',place:'東千歳バーベキュー',what:'昼ごはん（バーベキュー）'},{time:'13:15',place:'道の駅 マオイの丘公園',what:'展望台',ic:'mountain'},{time:'14:05',place:'ゆめっく館',what:'図書館・資料館'},{time:'15:50',place:'家',what:'到着',ic:'car'}]}],
  researchSrc:['net','net','book'],research:['太陽の森ディマシオ美術館には、高さ9m・幅27mの大きな油絵がある。','道の駅あびらD51ステーションには、本物のSL（D51形）が展示されている。','ミニチュアホースは、大人になっても背の高さが1mより低い小さな馬。'],
- quiz:{q:'ディマシオ美術館の大きな絵の高さは？',c:['3m','9m','27m'],a:1},
- items:['ハンカチ','ティッシュ','財布','水筒','着替え','パジャマ','上着','手袋','タオル','歯ブラシ','絆創膏','酔い止め','カメラ','色鉛筆','トランプ'],itemCat:{'トランプ':4},
+ quizzes:[{q:'ディマシオ美術館の大きな絵の高さは？',c:['3m','9m','27m'],a:1},{q:'あびらD51ステーションにある本物のSLの形は？',c:['C62形','D51形','E5系'],a:1},{q:'ミニチュアホースの背の高さは？',c:['1mより低い','2mくらい','3mくらい'],a:0}],
+ items:['ハンカチ','ティッシュ','財布','水筒','着替え','パジャマ','上着','手袋','タオル','歯ブラシ','絆創膏','カメラ','望遠鏡','色鉛筆','トランプ'],itemCat:{'トランプ':4},
  promises:['車ではシートベルトをする','迷子になったらその場で待つ','温泉では静かにする','泊まる部屋を散らかさない','挨拶をする','「ありがとう」を言う','時間を守る']})}
 let db={list:[]};
 function load(){try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&Array.isArray(j.list))db={...j,list:j.list.map(norm)};}catch(e){}
  if(!db.customItems||typeof db.customItems!=='object')db.customItems={};
  if(!TH[db.theme])db.theme='yuzu';
- db.list=db.list.map(x=>x.id==='sample'&&x.sample&&(x.sv||0)<7?sample():x);
+ db.list=db.list.map(x=>x.id==='sample'&&x.sample&&(x.sv||0)<8?sample():x);
  if(!db.seeded){db.list.push(sample());db.seeded=true;save(true);}}
 let saveT=0;
 function save(now){clearTimeout(saveT);const go=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('保存できませんでした。表紙の写真をやめるか、要らないしおりを消してね')}};now?go():(saveT=setTimeout(go,300))}
@@ -513,9 +518,10 @@ function placeLinks(s){const seen=new Set(),ps=[];for(let d=0;d<=s.nights;d++)fo
  return ps.length?`<div class="sg"><div class="sgl">予定の場所で調べる</div><div class="chips">${ps.slice(0,10).map(q=>`<a class="chip lk" href="https://www.google.com/search?q=${encodeURIComponent(q)}" target="_blank" rel="noopener">${esc(q)}</a>`).join('')}</div></div>`:''}
 function stepStudy(s){
  return `<div class="card"><h3>調べたこと</h3>${[0,1,2].map(i=>`<label class="f"><span>${i+1}つ目</span><textarea id="f-r${i}" data-f="research.${i}" rows="2" placeholder="${['例：〇〇は何年にできた','例：〇〇の名物は△△','例：〇〇の見どころは△△'][i]}">${esc(s.research[i])}</textarea></label><div class="rmeta"><div class="srcb" role="group" aria-label="調べた方法">${SRCK.map(k=>`<button class="${s.researchSrc[i]===k?'on':''}" data-act="src" data-i="${i}" data-v="${k}">${SRC_UI[k]}</button>`).join('')}</div>${s.dest.trim()?`<a class="sh" href="https://www.google.com/search?q=${encodeURIComponent(s.dest.trim()+' '+SKW[i])}" target="_blank" rel="noopener">「${esc(s.dest.trim())} ${SKW[i]}」で調べる</a>`:''}</div>`).join('')}${s.dest.trim()?'':'<p class="note">表紙で行き先を入れると、調べ方のヒントが出るよ。</p>'}${placeLinks(s)}</div>
- <div class="card"><h3>家族に出すクイズ<small>答えは最後のページに載るよ</small></h3>
- ${fld('問題','quiz.q',s.quiz.q,'例：小樽運河ができたのは何年？')}
- ${[0,1,2].map(i=>`<div class="qrow"><span class="ql">${'アイウ'[i]}</span><input type="text" id="f-qc${i}" data-f="quiz.c.${i}" value="${esc(s.quiz.c[i])}" placeholder="答えの候補" autocomplete="off"><button class="ans ${s.quiz.a===i?'on':''}" data-act="quizA" data-i="${i}">${s.quiz.a===i?'正解':'正解にする'}</button></div>`).join('')}
+ <div class="card"><h3>家族に出すクイズ<small>3問まで。答えは最後のページに載るよ</small></h3>
+ ${s.quizzes.map((q,n)=>`<div class="qz"><div class="qzh">${n+1}問目</div>
+ ${fld('問題','quizzes.'+n+'.q',q.q,['例：小樽運河ができたのは何年？','例：〇〇の名物はどれ？','例：〇〇の高さは何m？'][n])}
+ ${[0,1,2].map(i=>`<div class="qrow"><span class="ql">${'アイウ'[i]}</span><input type="text" id="f-q${n}c${i}" data-f="quizzes.${n}.c.${i}" value="${esc(q.c[i])}" placeholder="答えの候補" autocomplete="off" aria-label="${n+1}問目の${'アイウ'[i]}"><button class="ans ${q.a===i?'on':''}" data-act="quizA" data-n="${n}" data-i="${i}">${q.a===i?'正解':'正解にする'}</button></div>`).join('')}</div>`).join('')}
  </div>`;
 }
 function stepItems(s){
@@ -585,9 +591,8 @@ function pageHTML(s,key,mode,no,total){
  }else if(key==='map'){
   b=head('道のりマップ')+`<p class="mhint">家から${esc(s.dest||'行き先')}までの道を絵で描こう。通った町や、見えた物も書いてね。</p><div class="mapbox"><span class="mk goal"><img src="${icon('flag',sc,tl)}" alt="">${esc(s.dest||'行き先')}</span><span class="mk home"><img src="${icon('house',sc,tl)}" alt="">家</span></div>`;
  }else if(key==='study'){
-  const q=s.quiz;
   b=head('調べたこと')+`<div class="notes">${[0,1,2].map(i=>{const v=s.research[i].trim();return `<div class="nt"><span class="nb">${i+1}</span>${v?`<p>${esc(v)}</p>${s.researchSrc[i]?`<em class="src">${SRC_PR[s.researchSrc[i]]}</em>`:''}`:lines(2)}</div>`}).join('')}</div>`
-   +head('クイズ','答えは最後のページ')+`<div class="quiz">${q.q.trim()?`<p class="q">Q. ${esc(q.q)}</p>`:lines(1)}<div class="chs">${q.c.map((c,i)=>`<div class="ch"><span>${'アイウ'[i]}</span>${esc(c)||'&nbsp;'}</div>`).join('')}</div></div>`;
+   +head('クイズ','答えは最後のページ')+`<div class="quiz">${s.quizzes.map((q,n)=>`<div class="qq">${q.q.trim()?`<p class="q"><i>Q${n+1}</i>${esc(q.q)}</p>`:`<div class="q bl"><i>Q${n+1}</i>${lines(1)}</div>`}<div class="chs">${q.c.map((c,i)=>`<div class="ch"><span>${'アイウ'[i]}</span>${esc(c)||'&nbsp;'}</div>`).join('')}</div></div>`).join('')}</div>`;
  }else if(key==='items'){
   const ord=new Map(ITEM_SUG.flatMap(g=>g[1]).map((x,i)=>[x,i])),rows=L.items/2;
   const its=s.items.map((x,i)=>({x,c:itemCat(s,x),k:ord.has(x)?ord.get(x):1e4+i})).sort((a,c)=>a.c-c.c||a.k-c.k).slice(0,L.items);
@@ -606,8 +611,8 @@ function pageHTML(s,key,mode,no,total){
  }else if(key==='photo'){
   b=head('写真を貼ろう')+`<div class="photo">写真やチケット、パンフレットを切って貼ろう</div>`;
  }else{
-  const q=s.quiz;
-  b=head('クイズの答え')+`<div class="ansbox">${q.q.trim()?`答えは <b>${'アイウ'[q.a]}</b>　${esc(q.c[q.a])}`:'&nbsp;'}</div>`
+  const qa=s.quizzes.map((q,n)=>q.q.trim()?`<div><span>Q${n+1}</span><b>${'アイウ'[q.a]}</b>${esc(q.c[q.a])}</div>`:'').join('');
+  b=head('クイズの答え')+`<div class="ansbox">${qa||'&nbsp;'}</div>`
   +head('旅のメンバー')+`<div class="memb">${esc(s.members)||'&nbsp;'}</div>`+head('メモ')+lines(mini?4:8,true)
   +`<div class="foot"><img src="${icon('bookmark',sc,tl)}" alt="">しおりラボで作りました</div>`;
  }
@@ -699,7 +704,7 @@ const A={
  addRow(b){const s=cur(),d=+b.dataset.d;pickRow=null;s.days[d].items.push({time:'',place:'',what:''});touch(s);render();const its=s.days[d].items;setTimeout(()=>{const e=document.getElementById('f-d'+d+'t'+(its.length-1));if(e)e.scrollIntoView({block:'center'})},30)},
  delRow(b){const s=cur();pickRow=null;s.days[+b.dataset.d].items.splice(+b.dataset.i,1);touch(s);render()},
  src(b){const s=cur(),i=+b.dataset.i;s.researchSrc[i]=s.researchSrc[i]===b.dataset.v?'':b.dataset.v;touch(s);render()},
- quizA(b){const s=cur();s.quiz.a=+b.dataset.i;touch(s);render()},
+ quizA(b){const s=cur();s.quizzes[+b.dataset.n].a=+b.dataset.i;touch(s);render()},
  addItem(b){const s=cur(),v=b.dataset.v;if(!s.items.includes(v))s.items.push(v);if(!SUG_SET.has(v)&&db.customItems[v]!=null)s.itemCat[v]=db.customItems[v];touch(s);render()},
  addItemNew(){const e=$('#f-itemnew'),v=e.value.trim();if(!v)return;const s=cur(),c=+(($('#f-itemcat')||{}).value)||0;lastCat=c;if(!s.items.includes(v))s.items.push(v);if(!SUG_SET.has(v)){s.itemCat[v]=c;db.customItems[v]=c}touch(s);render();const n=$('#f-itemnew');if(n)n.focus()},
  delItem(b){const s=cur(),x=s.items.splice(+b.dataset.i,1)[0];delete s.itemCat[x];touch(s);render()},
