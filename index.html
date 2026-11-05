@@ -49,8 +49,8 @@ html{overflow-y:scroll;scrollbar-gutter:stable}
 .hero{background:var(--card);border-radius:26px;padding:22px 18px 20px;display:grid;gap:14px;box-shadow:0 3px 0 var(--line);text-align:center}
 .hero h2{margin:0;font-size:24px;font-weight:900;line-height:1.35}
 .hero p{margin:0;color:var(--sub);font-size:14px}
-.marks{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
-.marks img{width:34px;height:34px}
+.marks{display:flex;justify-content:center;gap:5px;flex-wrap:wrap}
+.marks img{width:32px;height:32px}
 .sc{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:12px;align-items:center;background:#fff;border-radius:20px;padding:14px;box-shadow:0 3px 0 var(--line)}
 .sc .ic{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .sc .ic img{width:38px;height:38px}
@@ -164,6 +164,7 @@ input[type=date],input[type=time]{min-height:50px}
 .todo button{border:0;background:#fff;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:900;color:var(--danger);box-shadow:0 2px 0 #F3D0D0}
 .pvgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 12px}
 .pv{margin:0;min-width:0}
+.offw{display:flex;justify-content:flex-end;margin-bottom:-6px}.offc{font-size:12px;font-weight:900;border-radius:999px;padding:3px 10px 3px 8px;display:inline-flex;align-items:center;gap:6px}.offc::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}.offc.ok{background:var(--leaf-l);color:var(--leaf-d)}.offc.wait{background:#EFE8DF;color:var(--sub)}
 @media (min-width:1080px){
 #app.wide{max-width:1100px}
 #app.wide #view{display:grid;grid-template-columns:minmax(0,600px) minmax(0,1fr);grid-template-rows:auto auto auto 1fr;column-gap:32px;align-items:start}
@@ -449,7 +450,7 @@ function barHome(){return `<header class="bar"><img class="logo" src="${logoIc()
 function homeHTML(){
  const td=today(),grp=s=>s.sample?1:(pd(s.start)&&endYmd(s)<td?2:0);
  const list=[...db.list].sort((a,b)=>grp(a)-grp(b)||(grp(a)===2?b.start.localeCompare(a.start):(b.ct||b.updated||0)-(a.ct||a.updated||0)));
- return barHome()+`<div class="main">
+ return barHome()+`<div class="main"><div class="offw"><span id="offc" class="offc" hidden></span></div>
  <div class="hero"><div class="marks">${HERO.map((k,i)=>{const v=th();return `<img src="${i%2?icon(k,v[6],v[8]):icon(k,stC(v),v[2])}" alt="">`}).join('')}</div>
  <h2>自分だけの<br>旅のしおりを作ろう</h2><p>スマホで書いたら、PDFにしてプリントできるよ</p>
  <button class="btn big" data-act="new">新しいしおりを作る</button>${deferredInstall&&db.hintDone?'<button class="btn ghost" data-act="install">ホーム画面に追加</button>':''}</div>
@@ -664,7 +665,7 @@ function render(){
  const wide=view==='edit'&&WIDE.matches;$('#app').classList.toggle('wide',wide);
  v.innerHTML=view==='home'?homeHTML():editHTML()+(wide?sideHTML():'');
  if(wide){const bh=$('#view .bar');if(bh)$('#app').style.setProperty('--barh',bh.offsetHeight+'px')}
- sizePreviews();
+ sizePreviews();updOff();
 }
 function sizePreviews(){if(zi>=0)sizeZoom();document.querySelectorAll('.pvz').forEach(z=>{const box=z.parentElement,pg=z.firstElementChild;if(!pg)return;z.style.zoom=box.clientWidth/pg.offsetWidth})}
 addEventListener('resize',()=>{clearTimeout(sizePreviews.t);sizePreviews.t=setTimeout(sizePreviews,150)});
@@ -741,6 +742,19 @@ document.addEventListener('focusout',()=>setTimeout(()=>{if(!document.activeElem
 let tx=null;
 addEventListener('touchstart',e=>{if(zi<0||e.touches.length!==1)return;tx={x:e.touches[0].clientX,y:e.touches[0].clientY}},{passive:true});
 addEventListener('touchend',e=>{if(zi<0||!tx)return;const t=e.changedTouches[0],dx=t.clientX-tx.x,dy=t.clientY-tx.y;tx=null;if(Math.abs(dx)>50&&Math.abs(dy)<60)openZoom(zi+(dx<0?1:-1))},{passive:true});
+let offState='none';
+function updOff(){const e=document.getElementById('offc');if(!e)return;const on=navigator.onLine!==false;
+ if(offState==='none'){e.hidden=true;return}
+ e.hidden=false;e.className='offc '+(offState==='ready'?'ok':'wait');
+ e.textContent=offState==='ready'?(on?'オフラインでも使えます':'オフラインで使っています'):(on?'オフライン用に準備中':'オフライン中（PDF作りなどは使えません）')}
+function chkOff(){try{Promise.all(['index.html',H2C,JSPDF].map(u=>caches.match(u))).then(a=>{offState=a.every(Boolean)?'ready':'prep';updOff();if(offState!=='ready')setTimeout(chkOff,3000)}).catch(()=>{})}catch(e){}}
+function offInit(){try{if(!('serviceWorker' in navigator)||!window.caches)return;
+ navigator.serviceWorker.getRegistration().then(r=>{if(!r)return;offState='prep';updOff();
+  const warm=()=>{try{performance.getEntriesByType('resource').forEach(x=>{if(/fonts\.gstatic\.com/.test(x.name))fetch(x.name,{mode:'cors'}).catch(()=>{})})}catch(_){}chkOff()};
+  if(navigator.serviceWorker.controller)warm();else navigator.serviceWorker.addEventListener('controllerchange',warm,{once:true});
+  chkOff()}).catch(()=>{})}catch(e){}}
+addEventListener('online',updOff);addEventListener('offline',updOff);
+addEventListener('load',()=>setTimeout(offInit,600));
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;if(view==='home')render()});
 load();render();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(sizePreviews);
