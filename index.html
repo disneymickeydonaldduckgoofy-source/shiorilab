@@ -25,6 +25,7 @@ body{margin:0;font-family:var(--round);font-size:16px;line-height:1.6;font-weigh
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--acc)}
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible,textarea:focus-visible,label:focus-within{outline:3px solid var(--acc);outline-offset:2px}
+html{overflow-y:scroll;scrollbar-gutter:stable}
 #app{max-width:640px;margin:0 auto;min-height:100vh;background:var(--bg);padding-left:var(--gut-l);padding-right:var(--gut-r);padding-block:0 120px;box-sizing:border-box}
 .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;margin-left:calc(-1 * var(--gut-l));margin-right:calc(-1 * var(--gut-r));padding-left:var(--gut-l);padding-right:var(--gut-r);padding-block:12px;background:var(--acc);color:var(--acc-on);display:flex;align-items:center;gap:10px;min-height:36px}
 .bar .logo{width:32px;height:32px;flex:none}
