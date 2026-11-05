@@ -92,7 +92,10 @@ input[type=date],input[type=time]{min-height:50px}
 .ib{border:2px solid var(--line);background:#fff;border-radius:16px;padding:8px 2px 6px;display:grid;justify-items:center;gap:2px;font-size:12px;font-weight:700;color:var(--sub)}
 .ib img{width:40px;height:40px}
 .ib.on{border-color:var(--acc);background:var(--acc-l);color:var(--ink)}
-.colors{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px}
+.colors{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px 2px}
+.thpick{display:grid;grid-template-columns:minmax(0,1fr) 30%;gap:12px;align-items:center}
+.thpick .cl{font-size:10px;letter-spacing:0;white-space:nowrap}.thpick .cl i{width:34px;height:34px}
+.thpv{aspect-ratio:148/210;overflow:hidden;border-radius:6px;box-shadow:0 2px 10px rgba(90,60,30,.18);background:#fff;max-width:100%;pointer-events:none}
 .cl{border:0;background:none;display:grid;justify-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--sub);padding:4px 0}
 .cl i{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--c) 0 58%,var(--c2) 58% 100%);box-shadow:0 3px 0 rgba(0,0,0,.12)}
 .cl.on{color:var(--ink)}.cl.on i{outline:3px solid var(--c);outline-offset:3px}
@@ -293,7 +296,7 @@ body.typing .navb{display:none}
 const KEY='shiorilab.v1';
 const H2C='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
 const JSPDF='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-const TH={yuzu:['#F5B800','#8F6A00','#FFF5CC','ゆず','#4A3800','#E09E00','#3E8E41','#2A6B2D','#E3F1DD'],marigold:['#FF9500','#B86400','#FFF0D9','オレンジ','#fff','#FF9500','#3F8F3A','#2B6827','#E4F1DE'],sora:['#2FA7E8','#17699A','#E2F3FD','そら','#fff','#2FA7E8','#C9690F','#8E4708','#FBEBDB'],wakaba:['#3DB566','#23793F','#E3F5E9','わかば','#fff','#3DB566','#8B5E34','#5F3E20','#F2E7DC'],sakura:['#F2709C','#B13E68','#FDE7EF','さくら','#fff','#F2709C','#4F8F2A','#356420','#E6F1DD'],budou:['#8E6BD8','#5B3F9F','#EEE8FB','ぶどう','#fff','#8E6BD8','#3F8F3A','#2B6827','#E4F1DE']};
+const TH={yuzu:['#F5B800','#8F6A00','#FFF5CC','ゆず','#4A3800','#E09E00','#3E8E41','#2A6B2D','#E3F1DD'],marigold:['#FF9500','#B86400','#FFF0D9','オレンジ','#fff','#FF9500','#3F8F3A','#2B6827','#E4F1DE'],sora:['#2FA7E8','#17699A','#E2F3FD','そら','#fff','#2FA7E8','#C9690F','#8E4708','#FBEBDB'],wakaba:['#3DB566','#23793F','#E3F5E9','わかば','#fff','#3DB566','#8B5E34','#5F3E20','#F2E7DC'],sakura:['#F2709C','#B13E68','#FDE7EF','さくら','#fff','#F2709C','#4F8F2A','#356420','#E6F1DD'],budou:['#8E6BD8','#5B3F9F','#EEE8FB','ぶどう','#fff','#8E6BD8','#3F8F3A','#2B6827','#E4F1DE'],ichigo:['#E8475A','#A3243A','#FDE6E8','いちご','#fff','#E8475A','#3F8F3A','#2B6827','#E4F1DE'],ramune:['#1FA9B6','#0E6A73','#DDF4F6','ラムネ','#fff','#1FA9B6','#2F6FD0','#1D4A91','#E1EAF9'],umi:['#1F5FA8','#143F72','#E0EAF6','うみ','#fff','#1F5FA8','#B8790F','#7A4F08','#F6EBD6'],choco:['#7B4B2A','#5A3219','#F2E6DC','チョコ','#fff','#7B4B2A','#239986','#17695C','#DDF3EE']};
 const LIM={a5:{sch:9,items:20,prom:12},mini:{sch:6,items:10,prom:8}};
 const STEPS=[
  {label:'表紙',hint:'どこへ行く旅かな？ 旅に名前を付けて、表紙の絵を選ぼう。'},
@@ -411,7 +414,7 @@ function homeHTML(){
  <button class="btn big" data-act="new">新しいしおりを作る</button>${deferredInstall&&db.hintDone?'<button class="btn ghost" data-act="install">ホーム画面に追加</button>':''}</div>
  ${hintHTML()}
  ${list.filter(s=>grp(s)<2).map(cardHTML).join('')}${(()=>{const past=list.filter(s=>grp(s)===2);return past.length?`<button class="pastbtn" data-act="togglePast" aria-expanded="${!!db.showPast}"><span>終わった旅（${past.length}）</span><em>${db.showPast?'閉じる':'開く'}</em></button>${db.showPast?past.map(cardHTML).join(''):''}`:''})()}
- <div class="card"><h3>色を選ぼう</h3><p class="note">アプリとしおりが、この色になるよ。</p><div class="colors">${Object.entries(TH).map(([k,v])=>`<button class="cl ${db.theme===k?'on':''}" data-act="theme" data-v="${k}" style="--c:${v[0]};--c2:${v[6]}" aria-pressed="${db.theme===k}"><i></i>${v[3]}</button>`).join('')}</div></div>
+ <div class="card"><h3>色を選ぼう</h3><p class="note">アプリとしおりが、この色になるよ。</p><div class="thpick"><div class="colors">${Object.entries(TH).map(([k,v])=>`<button class="cl ${db.theme===k?'on':''}" data-act="theme" data-v="${k}" style="--c:${v[0]};--c2:${v[6]}" aria-pressed="${db.theme===k}"><i></i>${v[3]}</button>`).join('')}</div><div class="thpv" aria-label="表紙の見本"><div class="pvz">${pageHTML(list[0]||sample(),'cover','a5',1,8)}</div></div></div></div>
  <div class="card"><h3>バックアップ</h3><p class="note">スマホを替える時や、もしもの時のために、しおりをファイルに保存しておけます。読み込むと、同じしおりは新しい方に入れ替わります。</p><div class="row2" style="grid-template-columns:1fr 1fr"><button class="btn ghost" data-act="exportAll">書き出す</button><label class="btn ghost pick">読み込む<input type="file" accept=".json,application/json" data-import id="f-import"></label></div></div>
  </div>`;
 }
