@@ -1,4 +1,4 @@
-const C='shiorilab-v4';
+const C='shiorilab-v5';
 const CORE=['./','index.html','manifest.webmanifest','si1-32.png','si1-180.png','si1-192.png','si1-512.png','si1-512-maskable.png'];
 const EXT=[
   'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
@@ -32,8 +32,8 @@ self.addEventListener('fetch',e=>{
 async function warmFonts(){
   const c=await caches.open(C);if(await c.match('fonts-done'))return;
   const r=await c.match(FONT_CSS);if(!r)return;const css=await r.text();
-  const urls=[],re=/\/\*([^*]*)\*\/\s*@font-face\s*\{([^}]*)\}/g;let m;
-  while((m=re.exec(css))){const n=/\[(\d+)\]/.exec(m[1]),lat=/\blatin\b(?!-ext)/.test(m[1]),u=/url\(([^)]+)\)/.exec(m[2]);
+  const urls=[],re=/(?:\/\*([^*]*)\*\/\s*)?@font-face\s*\{([^}]*)\}/g;let m;
+  while((m=re.exec(css))){const cm=m[1]||'',u=/url\(([^)]+)\)/.exec(m[2]),n=/\[(\d+)\]/.exec(cm)||(u&&/\.(\d+)\.woff2/.exec(u[1])),lat=/\blatin\b(?!-ext)/.test(cm);
     if(u&&((n&&+n[1]>=60)||(!n&&lat)))urls.push(u[1].replace(/['"]/g,''))}
   if(!urls.length)return;let ok=0;const q=urls.slice();
   await Promise.all(Array.from({length:6},async()=>{while(q.length){const x=q.shift();try{if(await c.match(x)){ok++;continue}const res=await fetch(x,{mode:'cors'});if(res.ok){await c.put(x,res);ok++}}catch(e){}}}));
