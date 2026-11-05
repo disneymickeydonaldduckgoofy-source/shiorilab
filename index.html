@@ -93,7 +93,7 @@ input[type=date],input[type=time]{min-height:50px}
 .ib img{width:40px;height:40px}
 .ib.on{border-color:var(--acc);background:var(--acc-l);color:var(--ink)}
 .colors{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px 2px}
-.thpick{display:grid;grid-template-columns:minmax(0,1fr) 30%;gap:12px;align-items:center}
+.thpick{display:grid;grid-template-columns:minmax(0,1fr) 86px;gap:12px;align-items:start}
 .thpick .cl{font-size:10px;letter-spacing:0;white-space:nowrap}.thpick .cl i{width:34px;height:34px}
 .thpv{aspect-ratio:148/210;overflow:hidden;border-radius:6px;box-shadow:0 2px 10px rgba(90,60,30,.18);background:#fff;max-width:100%;pointer-events:none}
 .cl{border:0;background:none;display:grid;justify-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--sub);padding:4px 0}
@@ -189,9 +189,9 @@ body.typing .navb{display:none}
 .pg *{box-sizing:border-box}
 .pg>*{position:relative;flex:none}
 .pg .deco{position:absolute;border-radius:50%;background:var(--tl)}
-.pg .d1{width:34mm;height:34mm;right:-12mm;top:-12mm}
-.pg .d2{width:5mm;height:5mm;right:26mm;top:9mm;background:var(--t)}
-.pg .d3{width:3mm;height:3mm;right:20mm;top:17mm;background:var(--lf)}
+.pg .motif{position:absolute;right:5mm;top:4mm;width:23mm;height:23mm}
+.pg .d2{width:5mm;height:5mm;right:31mm;top:7mm;background:var(--t)}
+.pg .d3{width:3mm;height:3mm;right:29mm;top:14mm;background:var(--lf)}
 .ph{display:flex;align-items:baseline;justify-content:space-between;gap:.5em;background:var(--t);color:var(--on);border-radius:.6em;padding:.3em .8em}
 .ph b{font-size:1.2em;font-weight:900;letter-spacing:.04em}
 .ph span{font-size:.8em;font-weight:700;white-space:nowrap}
@@ -201,7 +201,7 @@ body.typing .navb{display:none}
 .c-title.long{font-size:1.9em}.c-title.xlong{font-size:1.5em}
 .c-art{flex:1 1 0;min-height:0;display:flex;align-items:center;justify-content:center;background:var(--tl);border-radius:1em;overflow:hidden}
 .c-art img.photo{max-width:100%;max-height:100%;display:block}
-.c-art img.ic{width:50%;max-height:80%}
+.c-art img.ic{width:50%;max-height:80%}.c-art img.ic.n2{width:72%}.c-art img.ic.n3{width:86%}.c-art img.ic.n4{width:52%}
 .kv{display:flex;gap:.8em;align-items:baseline;border-bottom:.08em solid #E6DCD0;padding:.3em 0}
 .kv span{flex:none;width:4.4em;font-size:.82em;color:var(--td);font-weight:700}
 .kv b{font-size:1.12em;font-weight:700;min-width:0}
@@ -325,9 +325,14 @@ const ICONS={
  sun:'<circle cx="32" cy="32" r="11" fill="F"/><path d="M32 6v8M32 50v8M6 32h8M50 32h8M13.6 13.6l5.7 5.7M44.7 44.7l5.7 5.7M50.4 13.6l-5.7 5.7M19.3 44.7l-5.7 5.7"/>',
  cloud:'<path d="M18 48a11 11 0 0 1-1-22 15 15 0 0 1 29-3 12.5 12.5 0 0 1 1 25z" fill="F"/>',
  rain:'<path d="M7 34a25 25 0 0 1 50 0z" fill="F"/><path d="M32 9V6M32 34v17a5 5 0 0 1-10 0"/>',
- snow:'<path d="M32 6v52M9.5 19l45 26M54.5 19l-45 26M26 11l6 6 6-6M26 53l6-6 6 6M9 27l8-2-2-8M55 37l-8 2 2 8M55 27l-8-2 2-8M9 37l8 2-2 8"/>'
+ snow:'<path d="M32 6v52M9.5 19l45 26M54.5 19l-45 26M26 11l6 6 6-6M26 53l6-6 6 6M9 27l8-2-2-8M55 37l-8 2 2 8M55 27l-8-2 2-8M9 37l8 2-2 8"/>',
+ bus:'<rect x="10" y="9" width="44" height="40" rx="7" fill="F"/><rect x="16" y="16" width="32" height="14" rx="2" fill="#fff"/><path d="M32 16v14"/><circle cx="20" cy="40" r="2.6"/><circle cx="44" cy="40" r="2.6"/><path d="M17 49v6M47 49v6M10 22H6M58 22h-4"/>',
+ ship:'<path d="M8 39h48l-7 13H15z" fill="F"/><path d="M17 39V28h30v11" fill="#fff"/><path d="M26 28V17h12v11M32 17v-7"/><path d="M24 34h0M32 34h0M40 34h0"/><path d="M6 59c4-3 8-3 12 0s8 3 12 0 8-3 12 0 8 3 12 0"/>',
+ fish:'<path d="M7 32C15 19 33 17 44 30l12-9v22l-12-9C33 47 15 45 7 32z" fill="F"/><path d="M27 23c3 5 3 13 0 18"/><path d="M17 30h0"/><circle cx="50" cy="9" r="3"/><circle cx="41" cy="6" r="1.8"/>',
+ soft:'<path d="M22 36h20L32 60z" fill="#fff"/><path d="M26 42l9 8M38 42l-9 8"/><path d="M19 36c-4 0-4-7 1-7-3-5 2-9 7-8-1-5 3-9 5-14 3 4 7 8 6 14 5-1 9 4 6 8 5 0 5 7 1 7z" fill="F"/>',
+ flower:'<path d="M32 60V40M32 50c-6-6-13-6-17-2 5 5 12 5 17 2z"/><circle cx="32" cy="12" r="8" fill="F"/><circle cx="45" cy="21" r="8" fill="F"/><circle cx="40" cy="36" r="8" fill="F"/><circle cx="24" cy="36" r="8" fill="F"/><circle cx="19" cy="21" r="8" fill="F"/><circle cx="32" cy="25" r="6.5" fill="#fff"/>'
 };
-const MARKS=[['car','車'],['train','電車'],['plane','飛行機'],['onsen','温泉'],['mountain','山'],['sea','海'],['castle','お城'],['tent','キャンプ'],['animal','動物'],['wheel','遊園地'],['lantern','お祭り']];
+const MARKS=[['car','車'],['train','電車'],['bus','バス'],['plane','飛行機'],['ship','船'],['mountain','山'],['sea','海'],['flower','花'],['tent','キャンプ'],['onsen','温泉'],['castle','お城'],['animal','動物'],['fish','水族館'],['wheel','遊園地'],['lantern','お祭り'],['soft','アイス']],MARK_SET=new Set(MARKS.map(m=>m[0])),ICON_MAX=4,HERO=['car','train','plane','onsen','mountain','sea','castle','tent'];
 const ITEM_SUG=[['毎日使う',['ハンカチ','ティッシュ','ウェットティッシュ','財布','水筒','マスク','しおり']],['着る物',['着替え','下着','靴下','パジャマ','上着','帽子','手袋','マフラー','水着']],['お風呂・身支度',['タオル','歯ブラシ','くし','ヘアゴム','日焼け止め']],['もしもの時',['絆創膏','酔い止め','雨傘','レインコート','虫除け','ビニール袋']],['遊び・記録',['カメラ','筆記用具','色鉛筆','ノート','本','ゲーム','スマホ','タブレット','充電器','お菓子','レジャーシート','ぬいぐるみ']]];
 const PROM_SUG=[['安全',['車ではシートベルトをする','道路に飛び出さない','大人から離れない','迷子になったらその場で待つ','知らない人について行かない']],['マナー',['挨拶をする','「ありがとう」を言う','お店の中では走らない','電車やバスでは静かにする','温泉では静かにする','お店の物に勝手に触らない','ゴミは持ち帰る']],['自分のこと',['時間を守る','自分の荷物は自分で持つ','お小遣いの中で買い物をする','好き嫌いせずに食べる','早寝早起きをする','泊まる部屋を散らかさない','手をこまめに洗う']]];
 const CATS=[...ITEM_SUG.map(g=>g[0]),'その他'],SUG_SET=new Set(ITEM_SUG.flatMap(g=>g[1]));let lastCat=CATS.length-1;
@@ -350,6 +355,25 @@ const today=()=>ymd(new Date());
 const endYmd=s=>{const d=pd(s.start);return d?ymd(addDays(d,+s.nights||0)):''};
 function statusTag(s){const d=pd(s.start);if(!d)return '';const td=today();if(endYmd(s)<td)return '<span class="tag gray">終わった旅</span>';const st=ymd(d);if(st<=td)return '<span class="tag now">旅の途中</span>';const n=Math.round((d-pd(td))/864e5);return `<span class="tag now">あと${n}日</span>`}
 const svgURI=s=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);
+function iconsImg(keys,c,f){if(keys.length<2)return icon(keys[0]||'car',c,f);const n=keys.length,cols=n===4?2:n,rows=n===4?2:1,G=12,W=cols*64+(cols-1)*G,H=rows*64+(rows-1)*G;return svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" fill="none" stroke="${c}" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">${keys.map((k,i)=>`<g transform="translate(${(i%cols)*(64+G)} ${Math.floor(i/cols)*(64+G)})">${(ICONS[k]||ICONS.car).replace(/"F"/g,'"'+f+'"')}</g>`).join('')}</svg>`)}
+function motifSVG(k,v){
+ const [t,td,tl,,,,lf,lfd,lfl]=v;let b='';
+ const citrus=(dimple)=>`<circle cx="31" cy="37" r="22" fill="${t}"/>${dimple?[[22,30],[34,26],[42,36],[28,44],[38,48],[20,40],[45,46]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.3" fill="${td}" opacity=".35"/>`).join(''):''}<ellipse cx="22" cy="28" rx="6" ry="4" fill="#fff" opacity=".5" transform="rotate(-35 22 28)"/><path d="M31 15v-5" stroke="${lfd}" stroke-width="3" stroke-linecap="round"/><path d="M32 12c3-9 14-12 22-8-3 9-13 12-22 8z" fill="${lf}"/><path d="M34 11c6-1 11-3 16-6" stroke="${lfd}" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
+ switch(k){
+  case 'yuzu':b=citrus(true);break;
+  case 'marigold':b=citrus(false)+`<circle cx="31" cy="56" r="1.6" fill="${td}" opacity=".4"/>`;break;
+  case 'sora':b=`<circle cx="42" cy="22" r="13" fill="${lf}"/><path d="M15 52a10 10 0 0 1 0-20 13 13 0 0 1 25-4 11 11 0 0 1 9 24z" fill="${tl}" stroke="${t}" stroke-width="3" stroke-linejoin="round"/>`;break;
+  case 'wakaba':b=`<ellipse cx="32" cy="57" rx="18" ry="5" fill="${lfl}"/><path d="M32 56V30" stroke="${lf}" stroke-width="4" stroke-linecap="round"/><path d="M32 34C30 20 18 14 6 16c2 13 14 20 26 18z" fill="${t}"/><path d="M32 30c2-14 14-20 26-18-2 13-14 20-26 18z" fill="${t}"/><path d="M30 32C24 26 17 22 11 20M34 28c6-6 13-10 19-12" stroke="${tl}" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;break;
+  case 'sakura':b=`<path d="M40 50c6-4 14-3 18 3-6 5-14 4-18-3z" fill="${lf}"/>`+[0,72,144,216,288].map(a=>`<path d="M32 30C23 22 23 10 29 5l3 4 3-4c6 5 6 17-3 25z" fill="${t}" transform="rotate(${a} 32 30)"/>`).join('')+`<circle cx="32" cy="30" r="5" fill="${tl}"/>`;break;
+  case 'budou':b=`<path d="M32 18V8" stroke="${lfd}" stroke-width="3" stroke-linecap="round"/><path d="M33 12c-5-9-17-10-22-4 6 8 16 8 22 4z" fill="${lf}"/>`+[[15.5,24],[26.5,24],[37.5,24],[48.5,24],[21,34],[32,34],[43,34],[26.5,44],[37.5,44],[32,54]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6" fill="${t}"/><circle cx="${x-2}" cy="${y-2}" r="1.6" fill="#fff" opacity=".55"/>`).join('');break;
+  case 'ichigo':b=`<path d="M32 60C17 51 9 38 11 28c2-8 12-11 21-6 9-5 19-2 21 6 2 10-6 23-21 32z" fill="${t}"/>`+[[22,32],[32,30],[42,32],[27,40],[37,40],[22,46],[42,46],[32,48],[32,55]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="1.3" ry="2" fill="#fff" opacity=".8"/>`).join('')+`<path d="M32 25L19 17l9 0-3-8 7 5 7-5-3 8 9 0z" fill="${lf}"/><path d="M32 15V6" stroke="${lfd}" stroke-width="3" stroke-linecap="round"/>`;break;
+  case 'ramune':b=`<path d="M25 60h14c3 0 5-2 5-5V36c0-5-5-7-6-11l-1-2c2-2 2-6 0-8V7H27v8c-2 2-2 6 0 8l-1 2c-1 4-6 6-6 11v19c0 3 2 5 5 5z" fill="${tl}" stroke="${t}" stroke-width="3" stroke-linejoin="round"/><circle cx="32" cy="19" r="5" fill="${lf}"/><circle cx="30.5" cy="17.5" r="1.5" fill="#fff"/>`+[[28,44,2],[36,50,1.6],[33,38,1.3],[29,53,1.3]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#fff"/>`).join('');break;
+  case 'umi':b=`<path d="M4 16c4-4 8-4 12 0s8 4 12 0 8-4 12 0M14 26c4-4 8-4 12 0s8 4 12 0" stroke="${t}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M32 60L12 40c-2-12 8-18 20-18s22 6 20 18z" fill="${lf}"/><path d="M32 58L21 26M32 58V22M32 58l11-32M32 58L15 34M32 58l17-24" stroke="#fff" stroke-width="2" opacity=".7"/><rect x="26" y="56" width="12" height="5" rx="2" fill="${lfd}"/>`;break;
+  case 'choco':b=`<rect x="12" y="8" width="34" height="46" rx="3" fill="${t}"/><path d="M23.3 8v46M34.7 8v46M12 19.5h34M12 31h34M12 42.5h34" stroke="${td}" stroke-width="1.8"/><path d="M16 12h4M27 12h4" stroke="#fff" stroke-width="1.8" opacity=".35" stroke-linecap="round"/><path d="M38 58c1-10 10-15 20-13-1 10-10 15-20 13z" fill="${lf}"/><path d="M40 56c5-4 10-7 16-9" stroke="${lfd}" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;break;
+ }
+ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">${b}</svg>`;
+}
+const motifURI=()=>svgURI(motifSVG(TH[db.theme]?db.theme:'yuzu',th()));
 const ICACHE={};
 function icon(k,c,f){const key=k+c+f;return ICACHE[key]||(ICACHE[key]=svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" stroke="${c}" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">${(ICONS[k]||ICONS.car).replace(/"F"/g,'"'+f+'"')}</svg>`))}
 const th=()=>TH[db.theme]||TH.yuzu;
@@ -366,7 +390,7 @@ function pageList(s,mode){const days=Array.from({length:s.nights+1},(_,i)=>'d'+i
 const REN={"水とう": "水筒", "さいふ": "財布", "着がえ": "着替え", "くつ下": "靴下", "ぼうし": "帽子", "手ぶくろ": "手袋", "ばんそうこう": "絆創膏", "雨がさ": "雨傘", "かっぱ": "レインコート", "虫よけ": "虫除け", "ビニールぶくろ": "ビニール袋", "色えんぴつ": "色鉛筆", "大人からはなれない": "大人から離れない", "まいごになったらその場で待つ": "迷子になったらその場で待つ", "知らない人についていかない": "知らない人について行かない", "あいさつをする": "挨拶をする", "電車やバスではしずかにする": "電車やバスでは静かにする", "温泉ではしずかにする": "温泉では静かにする", "お店の物に勝手にさわらない": "お店の物に勝手に触らない", "時間をまもる": "時間を守る", "おこづかいの中で買い物をする": "お小遣いの中で買い物をする", "好ききらいせずに食べる": "好き嫌いせずに食べる", "早ね早おきをする": "早寝早起きをする", "泊まる部屋をちらかさない": "泊まる部屋を散らかさない"};
 const renArr=a=>[...new Set((a||[]).map(x=>REN[x]||x))];
 function norm(o){
- const s=Object.assign({id:uid(),made:today(),title:'',dest:'',start:'',nights:1,stay:'',author:'',members:'',theme:'yuzu',icon:'car',cover:'',coverMode:'icon',format:'a5',days:[],research:[],quiz:{},items:[],budget:'',wants:[],promises:[],itemCat:{},sample:false},o||{});
+ const s=Object.assign({id:uid(),made:today(),title:'',dest:'',start:'',nights:1,stay:'',author:'',members:'',theme:'yuzu',icon:'car',icons:null,cover:'',coverMode:'icon',format:'a5',days:[],research:[],quiz:{},items:[],budget:'',wants:[],promises:[],itemCat:{},sample:false},o||{});
  if(!s.itemCat||typeof s.itemCat!=='object'||Array.isArray(s.itemCat))s.itemCat={};
  s.items=renArr(s.items);s.promises=renArr(s.promises);for(const k in s.itemCat)if(REN[k]){s.itemCat[REN[k]]=s.itemCat[k];delete s.itemCat[k]}
  s.days=[0,1,2,3].map(i=>({items:((s.days[i]||{}).items||[]).map(x=>({time:x.time||'',place:x.place||'',what:x.what||''}))}));
@@ -376,10 +400,11 @@ function norm(o){
  s.nights=Math.max(0,Math.min(3,parseInt(s.nights,10)||0));
  s.stays=[0,1,2].map(i=>String((s.stays||[])[i]??(i===0?s.stay||'':'')));
  if(!TH[s.theme])s.theme='yuzu';
+ if(!Array.isArray(s.icons))s.icons=[s.icon];s.icons=[...new Set(s.icons.filter(k=>MARK_SET.has(k)))].slice(0,ICON_MAX);if(!s.icons.length)s.icons=['car'];s.icon=s.icons[0];
  if(!LIM[s.format])s.format='a5';
  return s;
 }
-function sample(){return norm({id:'sample',sample:true,sv:5,made:'2026-11-05',title:'新冠温泉の旅',dest:'新冠温泉',start:'2026-11-07',nights:1,stays:['新冠温泉 ホテルヒルズ'],author:'見本',members:'パパ、ママ、私',theme:'yuzu',icon:'onsen',
+function sample(){return norm({id:'sample',sample:true,sv:6,made:'2026-11-05',title:'新冠温泉の旅',dest:'新冠温泉',start:'2026-11-07',nights:1,stays:['新冠温泉 ホテルヒルズ'],author:'見本',members:'パパ、ママ、私',theme:'yuzu',icons:['onsen','animal','car'],
  days:[{items:[{time:'08:00',place:'家',what:'車で出発'},{time:'09:15',place:'道の駅 むかわ四季の館',what:''},{time:'09:50',place:'おひさま牧場',what:'ミニチュアホースとふれあう'},{time:'10:40',place:'レストランメルシー',what:'昼ごはん（オムライス・ハンバーグ）'},{time:'12:45',place:'太陽の森ディマシオ美術館',what:'美術館とガラスの美術館を見る'},{time:'14:30',place:'道の駅 サラブレッドロード新冠',what:'馬グッズ・ピーマンソフト'},{time:'14:55',place:'新冠温泉 ホテルヒルズ',what:'着く（チェックイン 15:00）'}]},
   {items:[{time:'10:00',place:'新冠温泉 ホテルヒルズ',what:'チェックアウトして出発'},{time:'11:35',place:'道の駅あびらD51ステーション',what:'SLの展示・ポッポらんど'},{time:'12:00',place:'東千歳バーベキュー',what:'昼ごはん（バーベキュー）'},{time:'13:15',place:'道の駅 マオイの丘公園',what:'展望台'},{time:'14:05',place:'ゆめっく館',what:'図書館・資料館'},{time:'15:50',place:'家',what:'到着'}]}],
  researchSrc:['net','net','book'],research:['太陽の森ディマシオ美術館には、高さ9m・幅27mの大きな油絵がある。','道の駅あびらD51ステーションには、本物のSL（D51形）が展示されている。','ミニチュアホースは、大人になっても背の高さが1mより低い小さな馬。'],
@@ -390,7 +415,7 @@ let db={list:[]};
 function load(){try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&Array.isArray(j.list))db={...j,list:j.list.map(norm)};}catch(e){}
  if(!db.customItems||typeof db.customItems!=='object')db.customItems={};
  if(!TH[db.theme])db.theme='yuzu';
- db.list=db.list.map(x=>x.id==='sample'&&x.sample&&(x.sv||0)<5?sample():x);
+ db.list=db.list.map(x=>x.id==='sample'&&x.sample&&(x.sv||0)<6?sample():x);
  if(!db.seeded){db.list.push(sample());db.seeded=true;save(true);}}
 let saveT=0;
 function save(now){clearTimeout(saveT);const go=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('保存できませんでした。表紙の写真をやめるか、要らないしおりを消してね')}};now?go():(saveT=setTimeout(go,300))}
@@ -409,7 +434,7 @@ function homeHTML(){
  const td=today(),grp=s=>!pd(s.start)?1:(endYmd(s)<td?2:0);
  const list=[...db.list].sort((a,b)=>grp(a)-grp(b)||(grp(a)===0?a.start.localeCompare(b.start):grp(a)===2?b.start.localeCompare(a.start):(b.updated||0)-(a.updated||0)));
  return barHome()+`<div class="main">
- <div class="hero"><div class="marks">${MARKS.slice(0,8).map(([k],i)=>{const v=th();return `<img src="${i%2?icon(k,v[6],v[8]):icon(k,stC(v),v[2])}" alt="">`}).join('')}</div>
+ <div class="hero"><div class="marks">${HERO.map((k,i)=>{const v=th();return `<img src="${i%2?icon(k,v[6],v[8]):icon(k,stC(v),v[2])}" alt="">`}).join('')}</div>
  <h2>自分だけの<br>旅のしおりを作ろう</h2><p>スマホで書いたら、PDFにしてプリントできるよ</p>
  <button class="btn big" data-act="new">新しいしおりを作る</button>${deferredInstall&&db.hintDone?'<button class="btn ghost" data-act="install">ホーム画面に追加</button>':''}</div>
  ${hintHTML()}
@@ -423,7 +448,7 @@ function hintHTML(){if(db.hintDone)return '';if(isStandalone()){db.hintDone=true
  return `<div class="card hintc"><h3>ホーム画面に追加しよう</h3><p class="note">ホーム画面に追加すると、アイコンからアプリのように開けるよ。</p><ul class="hl"><li><b>Android</b>：右上の「︙」→「ホーム画面に追加」</li><li><b>iPhone</b>：下の共有ボタン→「ホーム画面に追加」</li></ul><div class="row2" style="grid-template-columns:1fr 1fr">${deferredInstall?'<button class="btn" data-act="install">追加する</button>':'<span></span>'}<button class="btn ghost" data-act="hintDone">分かった</button></div></div>`}
 function cardHTML(s){
  const v=th(s),t=stC(v),tl=v[2];const n=[0,1,2,3,4].filter(i=>done(s,i)).length;
- return `<div class="sc"><div class="ic" style="background:${tl}">${s.coverMode==='photo'&&s.cover?`<img class="ph" src="${s.cover}" alt="">`:`<img src="${icon(s.icon,t,tl)}" alt="">`}</div>
+ return `<div class="sc"><div class="ic" style="background:${tl}">${s.coverMode==='photo'&&s.cover?`<img class="ph" src="${s.cover}" alt="">`:`<img src="${icon(s.icons[0],t,tl)}" alt="">`}</div>
  <div style="min-width:0"><b>${esc(s.title||s.dest||'名前のないしおり')}</b><div class="meta">${s.sample?'<span class="tag">見本</span>':''}${statusTag(s)}<span>${dateRange(s)||'日にち未定'}</span><span class="dots" aria-label="${n}/5">${[0,1,2,3,4].map(i=>`<i class="${done(s,i)?'on':''}"></i>`).join('')}</span></div></div>
  ${delId===s.id?`<div class="conf"><span style="flex:1">このしおりを消す？</span><button class="btn red" data-act="delYes">消す</button><button class="btn ghost" data-act="delNo">やめる</button></div>`:
  `<div class="ops">${s.sample?`<button class="btn green open" data-act="fromSample" data-id="${s.id}">この見本で作る</button><button class="btn ghost" data-act="open" data-id="${s.id}">見る</button>`:`<button class="btn open" data-act="open" data-id="${s.id}">開く</button><button class="btn ghost" data-act="copy" data-id="${s.id}">コピー</button>`}<button class="btn ghost" data-act="del" data-id="${s.id}">消す</button></div>`}</div>`;
@@ -448,12 +473,12 @@ function stepCover(s){
  ${fld('作った人','author',s.author,'自分の名前')}
  ${fld('一緒に行く人','members',s.members,'例：パパ、ママ、私')}
  </div>
- <div class="card"><h3>表紙の絵</h3>
+ <div class="card"><h3>表紙の絵<small>${ICON_MAX}つまで選べるよ</small></h3>
  <div class="seg"><button class="${s.coverMode==='photo'?'':'on'}" data-act="coverMode" data-v="icon">マーク</button><button class="${s.coverMode==='photo'?'on':''}" data-act="coverMode" data-v="photo">写真・自分の絵</button></div>
  ${s.coverMode==='photo'?`<p class="note">紙に描いた絵をスマホで撮って使えるよ。</p>
  ${s.cover?`<div class="photo-prev"><img src="${s.cover}" alt="表紙の写真"><button class="btn ghost" data-act="photoDel">写真をやめる</button></div>`:''}
  <label class="pick btn ${s.cover?'ghost':''}">${s.cover?'写真を変える':'写真を選ぶ'}<input type="file" accept="image/*" data-photo id="f-photo"></label>`
- :`<div class="icons">${MARKS.map(([k,n])=>`<button class="ib ${s.icon===k?'on':''}" data-act="icon" data-v="${k}"><img src="${icon(k,t,tl)}" alt="">${n}</button>`).join('')}</div>`}
+ :`<div class="icons">${MARKS.map(([k,n])=>`<button class="ib ${s.icons.includes(k)?'on':''}" data-act="icon" data-v="${k}" aria-pressed="${s.icons.includes(k)}"><img src="${icon(k,t,tl)}" alt="">${n}</button>`).join('')}</div>`}
  </div>`;
 }
 function stepPlan(s){
@@ -534,8 +559,8 @@ function pageHTML(s,key,mode,no,total){
  if(key==='cover'){
   const title=s.title||(s.dest?s.dest+'の旅':'旅のしおり');
   const tl2=title.length>14?'xlong':title.length>9?'long':'';
-  const art=s.coverMode==='photo'&&s.cover?`<img class="photo" src="${s.cover}" alt="">`:`<img class="ic" src="${icon(s.icon,sc,'#fff')}" alt="">`;
-  b=`<i class="deco d1"></i><i class="deco d2"></i><i class="deco d3"></i><div class="c-k">旅のしおり</div><h1 class="c-title ${tl2}">${esc(title)}</h1><div class="c-art">${art}</div>
+  const art=s.coverMode==='photo'&&s.cover?`<img class="photo" src="${s.cover}" alt="">`:`<img class="ic n${s.icons.length}" src="${iconsImg(s.icons,sc,'#fff')}" alt="">`;
+  b=`<img class="motif" src="${motifURI()}" alt=""><i class="deco d2"></i><i class="deco d3"></i><div class="c-k">旅のしおり</div><h1 class="c-title ${tl2}">${esc(title)}</h1><div class="c-art">${art}</div>
   <div><div class="kv"><span>行き先</span><b>${esc(s.dest)||'&nbsp;'}</b></div><div class="kv"><span>日にち</span><b>${dateRange(s)||'&nbsp;'}</b></div><div class="kv"><span>作った人</span><b>${esc(s.author)||'&nbsp;'}</b></div></div>`;
  }else if(/^d\d$/.test(key)){
   const i=+key.slice(1),its=s.days[i].items.filter(x=>x.place.trim()||x.what.trim()||x.time).slice(0,L.sch);
@@ -650,7 +675,7 @@ const A={
  sortRows(b){const s=cur(),d=+b.dataset.d,lead=[],gs=[];let g=null;s.days[d].items.forEach(x=>{if(x.time){g={t:x.time,rows:[x]};gs.push(g)}else(g?g.rows:lead).push(x)});gs.sort((a,c)=>a.t.localeCompare(c.t));s.days[d].items=[...lead,...gs.flatMap(x=>x.rows)];touch(s);render();toast('時間順に並べました')},
  exportAll(){try{const name='しおりラボ_バックアップ_'+today().replace(/-/g,'')+'.json',url=URL.createObjectURL(new Blob([JSON.stringify({app:'shiorilab',v:1,exported:new Date().toISOString(),list:db.list,customItems:db.customItems,theme:db.theme})],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);toast('書き出しました（ダウンロードの中にあるよ）')}catch(e){toast('書き出せませんでした')}},
  coverMode(b){const s=cur();s.coverMode=b.dataset.v;touch(s);render()},
- icon(b){const s=cur();s.icon=b.dataset.v;touch(s);render()},
+ icon(b){const s=cur(),k=b.dataset.v,i=s.icons.indexOf(k);if(i>=0){if(s.icons.length===1){toast('1つは選んでね');return}s.icons.splice(i,1)}else{if(s.icons.length>=ICON_MAX){toast('表紙の絵は'+ICON_MAX+'つまでだよ');return}s.icons.push(k)}s.icon=s.icons[0];touch(s);render()},
  theme(b){db.theme=b.dataset.v;save(true);render()},
  photoDel(){const s=cur();s.cover='';touch(s);render()},
  addRow(b){const s=cur(),d=+b.dataset.d;s.days[d].items.push({time:'',place:'',what:''});touch(s);render();const its=s.days[d].items;setTimeout(()=>{const e=document.getElementById('f-d'+d+'t'+(its.length-1));if(e)e.scrollIntoView({block:'center'})},30)},
