@@ -312,7 +312,7 @@ const JSPDF='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js
 const TH={yuzu:['#F5B800','#8F6A00','#FFF5CC','ゆず','#4A3800','#E09E00','#3E8E41','#2A6B2D','#E3F1DD'],marigold:['#FF9500','#B86400','#FFF0D9','オレンジ','#fff','#FF9500','#3F8F3A','#2B6827','#E4F1DE'],sora:['#2FA7E8','#17699A','#E2F3FD','そら','#fff','#2FA7E8','#C9690F','#8E4708','#FBEBDB'],wakaba:['#3DB566','#23793F','#E3F5E9','わかば','#fff','#3DB566','#8B5E34','#5F3E20','#F2E7DC'],sakura:['#F2709C','#B13E68','#FDE7EF','さくら','#fff','#F2709C','#4F8F2A','#356420','#E6F1DD'],budou:['#8E6BD8','#5B3F9F','#EEE8FB','ぶどう','#fff','#8E6BD8','#3F8F3A','#2B6827','#E4F1DE'],ichigo:['#E8475A','#A3243A','#FDE6E8','いちご','#fff','#E8475A','#3F8F3A','#2B6827','#E4F1DE'],ramune:['#1FA9B6','#0E6A73','#DDF4F6','ラムネ','#fff','#1FA9B6','#2F6FD0','#1D4A91','#E1EAF9'],umi:['#1F5FA8','#143F72','#E0EAF6','うみ','#fff','#1F5FA8','#B8790F','#7A4F08','#F6EBD6'],choco:['#7B4B2A','#5A3219','#F2E6DC','チョコ','#fff','#7B4B2A','#239986','#17695C','#DDF3EE']};
 const LIM={a5:{sch:9,items:20,prom:12},mini:{sch:6,items:10,prom:8}};
 const STEPS=[
- {label:'表紙',hint:'どこへ行く旅かな？ 旅に名前を付けて、表紙の絵を選ぼう。'},
+ {label:'表紙',hint:'どこへ行く旅かな？ 旅に名前を付けて、表紙の絵と色を選ぼう。'},
  {label:'予定',hint:'何時に、どこで、何をする？ 分からない時間は、家の人に聞いてみよう。'},
  {label:'調べる',hint:'行く場所のことを本やインターネットで調べて、3つ書こう。家族に出すクイズも作ってね。'},
  {label:'持ち物',hint:'持っていく物を選ぼう。タップすると増えるよ。無い物は自分で書いてね。'},
@@ -437,8 +437,8 @@ function done(s,i){switch(i){case 0:return !!((s.title||s.dest)&&s.start);case 1
 /* ---------- views ---------- */
 function barHome(){return `<header class="bar"><img class="logo" src="${logoIc()}" alt=""><h1>しおりラボ<small>旅のしおりを作ろう</small></h1></header>`}
 function homeHTML(){
- const td=today(),grp=s=>s.sample?-1:!pd(s.start)?1:(endYmd(s)<td?2:0);
- const list=[...db.list].sort((a,b)=>grp(a)-grp(b)||(grp(a)===0?a.start.localeCompare(b.start):grp(a)===2?b.start.localeCompare(a.start):(b.updated||0)-(a.updated||0)));
+ const td=today(),grp=s=>s.sample?1:(pd(s.start)&&endYmd(s)<td?2:0);
+ const list=[...db.list].sort((a,b)=>grp(a)-grp(b)||(grp(a)===2?b.start.localeCompare(a.start):(b.ct||b.updated||0)-(a.ct||a.updated||0)));
  return barHome()+`<div class="main">
  <div class="hero"><div class="marks">${HERO.map((k,i)=>{const v=th();return `<img src="${i%2?icon(k,v[6],v[8]):icon(k,stC(v),v[2])}" alt="">`}).join('')}</div>
  <h2>自分だけの<br>旅のしおりを作ろう</h2><p>スマホで書いたら、PDFにしてプリントできるよ</p>
@@ -485,7 +485,8 @@ function stepCover(s){
  ${s.cover?`<div class="photo-prev"><img src="${s.cover}" alt="表紙の写真"><button class="btn ghost" data-act="photoDel">写真をやめる</button></div>`:''}
  <label class="pick btn ${s.cover?'ghost':''}">${s.cover?'写真を変える':'写真を選ぶ'}<input type="file" accept="image/*" data-photo id="f-photo"></label>`
  :`${s.icons.length>1?`<div class="selw"><span>表紙に入る順<small>長押しして動かすと、順番を変えられるよ</small></span><div class="selrow">${s.icons.map((k,i)=>`<div class="sel" data-k="${k}"><b>${i+1}</b><img src="${icon(k,t,tl)}" alt="" draggable="false"></div>`).join('')}</div></div>`:''}<div class="icons">${MARKS.map(([k,n])=>`<button class="ib ${s.icons.includes(k)?'on':''}" data-act="icon" data-v="${k}" aria-pressed="${s.icons.includes(k)}"><img src="${icon(k,t,tl)}" alt="">${n}</button>`).join('')}</div>`}
- </div>`;
+ </div>
+ <div class="card"><h3>しおりの色<small>アプリもこの色になるよ</small></h3><div class="colors">${Object.entries(TH).map(([k,w])=>`<button class="cl ${s.theme===k?'on':''}" data-act="sTheme" data-v="${k}" style="--c:${w[0]};--c2:${w[6]}" aria-pressed="${s.theme===k}"><i></i>${w[3]}</button>`).join('')}</div></div>`;
 }
 function stepPlan(s){
  const nd=s.nights+1,L=LIM[s.format],V=th(s),t=stC(V),tl=V[2];let h='';
@@ -664,12 +665,12 @@ function onImport(inp){const f=inp.files&&inp.files[0];if(!f)return;const rd=new
   save(true);render();toast('読み込みました（新規'+add+'件・入れ替え'+up+'こ）')}catch(e){toast('このファイルは読み込めませんでした')}inp.value=''};
  rd.onerror=()=>toast('このファイルは読み込めませんでした');rd.readAsText(f)}
 const A={
- new(){const m=db.list.find(x=>x.sample),c=m?JSON.parse(JSON.stringify({members:m.members,items:m.items,itemCat:m.itemCat,promises:m.promises,icons:m.icons})):{};const s=norm(Object.assign(c,{author:m&&m.author&&m.author!=='見本'?m.author:(db.lastAuthor||''),theme:db.theme}));s.updated=Date.now();db.list.push(s);save(true);curId=s.id;dirty();go('edit',0)},
+ new(){const m=db.list.find(x=>x.sample),c=m?JSON.parse(JSON.stringify({members:m.members,items:m.items,itemCat:m.itemCat,promises:m.promises,icons:m.icons})):{};const s=norm(Object.assign(c,{author:m&&m.author&&m.author!=='見本'?m.author:(db.lastAuthor||''),theme:db.theme}));s.updated=s.ct=Date.now();db.list.push(s);save(true);curId=s.id;dirty();go('edit',0)},
  open(b){curId=b.dataset.id;dirty();go('edit',0)},
- copy(b){const o=db.list.find(x=>x.id===b.dataset.id);if(!o)return;const s=norm(JSON.parse(JSON.stringify(o)));s.id=uid();s.sample=false;delete s.sv;delete s.own;s.title=(o.title||o.dest||'しおり')+'（コピー）';s.updated=Date.now();db.list.push(s);save(true);render();toast('コピーしました')},
+ copy(b){const o=db.list.find(x=>x.id===b.dataset.id);if(!o)return;const s=norm(JSON.parse(JSON.stringify(o)));s.id=uid();s.sample=false;delete s.sv;delete s.own;s.title=(o.title||o.dest||'しおり')+'（コピー）';s.updated=s.ct=Date.now();db.list.push(s);save(true);render();toast('コピーしました')},
  del(b){delId=b.dataset.id;render()},
  hintDone(){db.hintDone=true;save(true);render()},
- fromSample(b){const o=db.list.find(x=>x.id===b.dataset.id);if(!o)return;const s=norm(JSON.parse(JSON.stringify(o)));s.id=uid();s.sample=false;delete s.sv;delete s.own;s.made=today();s.author=db.lastAuthor||'';s.theme=db.theme;s.updated=Date.now();db.list.push(s);save(true);curId=s.id;dirty();go('edit',0);toast('見本をもとに新しいしおりを作りました')},
+ fromSample(b){const o=db.list.find(x=>x.id===b.dataset.id);if(!o)return;const s=norm(JSON.parse(JSON.stringify(o)));s.id=uid();s.sample=false;delete s.sv;delete s.own;s.made=today();s.author=db.lastAuthor||'';s.theme=db.theme;s.updated=s.ct=Date.now();db.list.push(s);save(true);curId=s.id;dirty();go('edit',0);toast('見本をもとに新しいしおりを作りました')},
  togglePast(){db.showPast=!db.showPast;save(true);render()},
  delYes(){db.list=db.list.filter(x=>x.id!==delId);delId=null;save(true);render()},
  delNo(){delId=null;render()},
@@ -681,6 +682,7 @@ const A={
  sortRows(b){pickRow=null;const s=cur(),d=+b.dataset.d,lead=[],gs=[];let g=null;s.days[d].items.forEach(x=>{if(x.time){g={t:x.time,rows:[x]};gs.push(g)}else(g?g.rows:lead).push(x)});gs.sort((a,c)=>a.t.localeCompare(c.t));s.days[d].items=[...lead,...gs.flatMap(x=>x.rows)];touch(s);render();toast('時間順に並べました')},
  exportAll(){try{const name='しおりラボ_バックアップ_'+today().replace(/-/g,'')+'.json',url=URL.createObjectURL(new Blob([JSON.stringify({app:'shiorilab',v:1,exported:new Date().toISOString(),list:db.list,customItems:db.customItems,theme:db.theme})],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);toast('書き出しました（ダウンロードの中にあるよ）')}catch(e){toast('書き出せませんでした')}},
  coverMode(b){const s=cur();s.coverMode=b.dataset.v;touch(s);render()},
+ sTheme(b){const x=cur();if(!x)return;x.theme=b.dataset.v;touch(x);render()},
  cpick(b){cpickId=cpickId===b.dataset.id?null:b.dataset.id;render()},
  cardTheme(b){const x=db.list.find(o=>o.id===b.dataset.id);if(!x)return;x.theme=b.dataset.v;cpickId=null;touch(x);render()},
  pickIc(b){const k=b.dataset.d+'-'+b.dataset.i;pickRow=pickRow===k?null:k;render()},
