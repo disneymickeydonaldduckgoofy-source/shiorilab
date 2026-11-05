@@ -69,6 +69,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,label:focus-with
 .btn.red{background:var(--danger);color:#fff;box-shadow:0 4px 0 #A82E33}
 .hintc{background:var(--hint-bg);box-shadow:0 3px 0 var(--hint-sh)}.hl{margin:0;padding-left:1.2em;display:grid;gap:4px;font-size:15px}
 .pastbtn{display:flex;justify-content:space-between;align-items:center;border:2px solid var(--line);background:#fff;border-radius:16px;padding:12px 16px;font-weight:900;font-size:15px;color:var(--sub)}.pastbtn em{font-style:normal;font-size:13px;color:var(--acc-d)}
+.rs{grid-column:1/-1;justify-self:start;font-size:13px;padding:2px 0}
 .link{border:0;background:none;color:var(--acc-d);font-weight:900;font-size:15px;padding:8px 0;text-align:left;text-decoration:underline;text-underline-offset:4px}
 /* steps */
 .steps{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;padding-top:14px}
@@ -199,10 +200,7 @@ body.typing .navb{display:none}
 .pg.mini{font-size:5.6mm;padding:10mm 10mm 12mm;gap:.6em}
 .pg *{box-sizing:border-box}
 .pg>*{position:relative;flex:none}
-.pg .deco{position:absolute;border-radius:50%;background:var(--tl)}
-.pg .motif{position:absolute;right:5mm;top:4mm;width:23mm;height:23mm}
-.pg .d2{width:5mm;height:5mm;right:31mm;top:7mm;background:var(--t)}
-.pg .d3{width:3mm;height:3mm;right:29mm;top:14mm;background:var(--lf)}
+
 .ph{display:flex;align-items:baseline;justify-content:space-between;gap:.5em;background:var(--t);color:var(--on);border-radius:.6em;padding:.3em .8em}
 .ph b{font-size:1.2em;font-weight:900;letter-spacing:.04em}
 .ph span{font-size:.8em;font-weight:700;white-space:nowrap}
@@ -375,24 +373,6 @@ const endYmd=s=>{const d=pd(s.start);return d?ymd(addDays(d,+s.nights||0)):''};
 function statusTag(s){const d=pd(s.start);if(!d)return '';const td=today();if(endYmd(s)<td)return '<span class="tag gray">終わった旅</span>';const st=ymd(d);if(st<=td)return '<span class="tag now">旅の途中</span>';const n=Math.round((d-pd(td))/864e5);return `<span class="tag now">あと${n}日</span>`}
 const svgURI=s=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);
 function iconsImg(keys,c,f){if(keys.length<2)return icon(keys[0]||'car',c,f);const n=keys.length,cols=n===4?2:n,rows=n===4?2:1,G=12,W=cols*64+(cols-1)*G,H=rows*64+(rows-1)*G;return svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" fill="none" stroke="${c}" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">${keys.map((k,i)=>`<g transform="translate(${(i%cols)*(64+G)} ${Math.floor(i/cols)*(64+G)})">${(ICONS[k]||ICONS.car).replace(/"F"/g,'"'+f+'"')}</g>`).join('')}</svg>`)}
-function motifSVG(k,v){
- const [t,td,tl,,,,lf,lfd,lfl]=v;let b='';
- const citrus=(dimple)=>`<circle cx="31" cy="37" r="22" fill="${t}"/>${dimple?[[22,30],[34,26],[42,36],[28,44],[38,48],[20,40],[45,46]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.3" fill="${td}" opacity=".35"/>`).join(''):''}<ellipse cx="22" cy="28" rx="6" ry="4" fill="#fff" opacity=".5" transform="rotate(-35 22 28)"/><path d="M31 15v-5" stroke="${lfd}" stroke-width="3" stroke-linecap="round"/><path d="M32 12c3-9 14-12 22-8-3 9-13 12-22 8z" fill="${lf}"/><path d="M34 11c6-1 11-3 16-6" stroke="${lfd}" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
- switch(k){
-  case 'yuzu':b=citrus(true);break;
-  case 'marigold':b=citrus(false)+`<circle cx="31" cy="56" r="1.6" fill="${td}" opacity=".4"/>`;break;
-  case 'sora':b=`<circle cx="42" cy="22" r="13" fill="${lf}"/><path d="M15 52a10 10 0 0 1 0-20 13 13 0 0 1 25-4 11 11 0 0 1 9 24z" fill="${tl}" stroke="${t}" stroke-width="3" stroke-linejoin="round"/>`;break;
-  case 'wakaba':b=`<ellipse cx="32" cy="57" rx="18" ry="5" fill="${lfl}"/><path d="M32 56V30" stroke="${lf}" stroke-width="4" stroke-linecap="round"/><path d="M32 34C30 20 18 14 6 16c2 13 14 20 26 18z" fill="${t}"/><path d="M32 30c2-14 14-20 26-18-2 13-14 20-26 18z" fill="${t}"/><path d="M30 32C24 26 17 22 11 20M34 28c6-6 13-10 19-12" stroke="${tl}" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;break;
-  case 'sakura':b=`<path d="M40 50c6-4 14-3 18 3-6 5-14 4-18-3z" fill="${lf}"/>`+[0,72,144,216,288].map(a=>`<path d="M32 30C23 22 23 10 29 5l3 4 3-4c6 5 6 17-3 25z" fill="${t}" transform="rotate(${a} 32 30)"/>`).join('')+`<circle cx="32" cy="30" r="5" fill="${tl}"/>`;break;
-  case 'budou':b=`<path d="M32 18V8" stroke="${lfd}" stroke-width="3" stroke-linecap="round"/><path d="M33 12c-5-9-17-10-22-4 6 8 16 8 22 4z" fill="${lf}"/>`+[[15.5,24],[26.5,24],[37.5,24],[48.5,24],[21,34],[32,34],[43,34],[26.5,44],[37.5,44],[32,54]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6" fill="${t}"/><circle cx="${x-2}" cy="${y-2}" r="1.6" fill="#fff" opacity=".55"/>`).join('');break;
-  case 'ichigo':b=`<path d="M32 60C17 51 9 38 11 28c2-8 12-11 21-6 9-5 19-2 21 6 2 10-6 23-21 32z" fill="${t}"/>`+[[22,32],[32,30],[42,32],[27,40],[37,40],[22,46],[42,46],[32,48],[32,55]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="1.3" ry="2" fill="#fff" opacity=".8"/>`).join('')+`<path d="M32 25L19 17l9 0-3-8 7 5 7-5-3 8 9 0z" fill="${lf}"/><path d="M32 15V6" stroke="${lfd}" stroke-width="3" stroke-linecap="round"/>`;break;
-  case 'ramune':b=`<path d="M25 60h14c3 0 5-2 5-5V36c0-5-5-7-6-11l-1-2c2-2 2-6 0-8V7H27v8c-2 2-2 6 0 8l-1 2c-1 4-6 6-6 11v19c0 3 2 5 5 5z" fill="${tl}" stroke="${t}" stroke-width="3" stroke-linejoin="round"/><circle cx="32" cy="19" r="5" fill="${lf}"/><circle cx="30.5" cy="17.5" r="1.5" fill="#fff"/>`+[[28,44,2],[36,50,1.6],[33,38,1.3],[29,53,1.3]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#fff"/>`).join('');break;
-  case 'umi':b=`<path d="M4 16c4-4 8-4 12 0s8 4 12 0 8-4 12 0M14 26c4-4 8-4 12 0s8 4 12 0" stroke="${t}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M32 60L12 40c-2-12 8-18 20-18s22 6 20 18z" fill="${lf}"/><path d="M32 58L21 26M32 58V22M32 58l11-32M32 58L15 34M32 58l17-24" stroke="#fff" stroke-width="2" opacity=".7"/><rect x="26" y="56" width="12" height="5" rx="2" fill="${lfd}"/>`;break;
-  case 'choco':b=`<rect x="12" y="8" width="34" height="46" rx="3" fill="${t}"/><path d="M23.3 8v46M34.7 8v46M12 19.5h34M12 31h34M12 42.5h34" stroke="${td}" stroke-width="1.8"/><path d="M16 12h4M27 12h4" stroke="#fff" stroke-width="1.8" opacity=".35" stroke-linecap="round"/><path d="M38 58c1-10 10-15 20-13-1 10-10 15-20 13z" fill="${lf}"/><path d="M40 56c5-4 10-7 16-9" stroke="${lfd}" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;break;
- }
- return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">${b}</svg>`;
-}
-const motifURI=s=>{const k=TH[s&&s.theme]?s.theme:(TH[db.theme]?db.theme:'yuzu');return svgURI(motifSVG(k,TH[k]))};
 const ICACHE={};
 function icon(k,c,f){const key=k+c+f;return ICACHE[key]||(ICACHE[key]=svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" stroke="${c}" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">${(ICONS[k]||ICONS.car).replace(/"F"/g,'"'+f+'"')}</svg>`))}
 const th=s=>TH[s&&s.theme]||TH[db.theme]||TH.yuzu;
@@ -439,23 +419,24 @@ function load(){try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&
  if(!db.customItems||typeof db.customItems!=='object')db.customItems={};
  if(!TH[db.theme])db.theme='yuzu';
  if(!db.tv){db.list.forEach(x=>{if(!x.sample)x.theme=db.theme});db.tv=1;save(true)}
- db.list=db.list.map(x=>x.id==='sample'&&x.sample&&(x.sv||0)<8?sample():x);
+ db.list.forEach(x=>{if(x.sample&&x.own===undefined)x.own=!!x.updated});
+ db.list=db.list.map(x=>x.id==='sample'&&x.sample&&!x.own&&(x.sv||0)<8?sample():x);
  if(!db.seeded){db.list.push(sample());db.seeded=true;save(true);}}
 let saveT=0;
 function save(now){clearTimeout(saveT);const go=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('保存できませんでした。表紙の写真をやめるか、要らないしおりを消してね')}};now?go():(saveT=setTimeout(go,300))}
 
 /* ---------- state ---------- */
-let view='home',curId=null,step=0,delId=null,pickRow=null,cpickId=null,lp=null,lastPdf=null,lastSheets=null,deferredInstall=null,canShareFiles=false;
+let view='home',curId=null,step=0,delId=null,resetAsk=false,pickRow=null,cpickId=null,lp=null,lastPdf=null,lastSheets=null,deferredInstall=null,canShareFiles=false;
 try{canShareFiles=!!(navigator.canShare&&navigator.canShare({files:[new File(['x'],'a.pdf',{type:'application/pdf'})]}))}catch(e){}
 const cur=()=>db.list.find(x=>x.id===curId);
 function dirty(){lastPdf=null;lastSheets=null}
-function touch(s){s.updated=Date.now();dirty();save()}
+function touch(s){s.updated=Date.now();if(s.sample)s.own=true;dirty();save()}
 function done(s,i){switch(i){case 0:return !!((s.title||s.dest)&&s.start);case 1:return s.days[0].items.some(x=>x.place.trim());case 2:return s.research.some(x=>x.trim());case 3:return s.items.length>=3;case 4:return s.promises.length>0;default:return false}}
 
 /* ---------- views ---------- */
 function barHome(){return `<header class="bar"><img class="logo" src="${logoIc()}" alt=""><h1>しおりラボ<small>旅のしおりを作ろう</small></h1></header>`}
 function homeHTML(){
- const td=today(),grp=s=>!pd(s.start)?1:(endYmd(s)<td?2:0);
+ const td=today(),grp=s=>s.sample?-1:!pd(s.start)?1:(endYmd(s)<td?2:0);
  const list=[...db.list].sort((a,b)=>grp(a)-grp(b)||(grp(a)===0?a.start.localeCompare(b.start):grp(a)===2?b.start.localeCompare(a.start):(b.updated||0)-(a.updated||0)));
  return barHome()+`<div class="main">
  <div class="hero"><div class="marks">${HERO.map((k,i)=>{const v=th();return `<img src="${i%2?icon(k,v[6],v[8]):icon(k,stC(v),v[2])}" alt="">`}).join('')}</div>
@@ -474,8 +455,8 @@ function cardHTML(s){
  const v=th(s),t=stC(v),tl=v[2];const n=[0,1,2,3,4].filter(i=>done(s,i)).length;
  return `<div class="sc"><div class="ic" style="background:${tl}">${s.coverMode==='photo'&&s.cover?`<img class="ph" src="${s.cover}" alt="">`:`<img src="${icon(s.icons[0],t,tl)}" alt="">`}</div>
  <div style="min-width:0"><b>${esc(s.title||s.dest||'名前のないしおり')}</b><div class="meta">${s.sample?'<span class="tag">見本</span>':''}${statusTag(s)}<span>${dateRange(s)||'日にち未定'}</span><span class="dots" aria-label="${n}/5">${[0,1,2,3,4].map(i=>`<i class="${done(s,i)?'on':''}"></i>`).join('')}</span></div></div><button class="csw" data-act="cpick" data-id="${s.id}" aria-expanded="${cpickId===s.id}" aria-label="このしおりの色を変える"><i style="--c:${v[0]};--c2:${v[6]}"></i>色</button>${cpickId===s.id?`<div class="cpk"><div class="colors">${Object.entries(TH).map(([k,w])=>`<button class="cl ${s.theme===k?'on':''}" data-act="cardTheme" data-id="${s.id}" data-v="${k}" style="--c:${w[0]};--c2:${w[6]}" aria-pressed="${s.theme===k}"><i></i>${w[3]}</button>`).join('')}</div></div>`:''}
- ${delId===s.id?`<div class="conf"><span style="flex:1">このしおりを消す？</span><button class="btn red" data-act="delYes">消す</button><button class="btn ghost" data-act="delNo">やめる</button></div>`:
- `<div class="ops">${s.sample?`<button class="btn green open" data-act="fromSample" data-id="${s.id}">この見本で作る</button><button class="btn ghost" data-act="open" data-id="${s.id}">見る</button>`:`<button class="btn open" data-act="open" data-id="${s.id}">開く</button><button class="btn ghost" data-act="copy" data-id="${s.id}">コピー</button>`}<button class="btn ghost" data-act="del" data-id="${s.id}">消す</button></div>`}</div>`;
+ ${delId===s.id?`<div class="conf"><span style="flex:1">${s.sample?'見本を消す？（「最初の見本に戻す」で戻せなくなるよ）':'このしおりを消す？'}</span><button class="btn red" data-act="delYes">消す</button><button class="btn ghost" data-act="delNo">やめる</button></div>`:s.sample&&resetAsk?`<div class="conf"><span style="flex:1">直した見本を、最初の内容に戻す？</span><button class="btn red" data-act="resetYes">戻す</button><button class="btn ghost" data-act="resetNo">やめる</button></div>`:
+ `<div class="ops">${s.sample?`<button class="btn green open" data-act="fromSample" data-id="${s.id}">この見本で作る</button><button class="btn ghost" data-act="open" data-id="${s.id}">直す</button>`:`<button class="btn open" data-act="open" data-id="${s.id}">開く</button><button class="btn ghost" data-act="copy" data-id="${s.id}">コピー</button>`}<button class="btn ghost" data-act="del" data-id="${s.id}">消す</button></div>${s.sample&&s.own?'<button class="link rs" data-act="resetAsk">最初の見本に戻す</button>':''}`}</div>`;
 }
 function editHTML(){
  const s=cur();
@@ -585,7 +566,7 @@ function pageHTML(s,key,mode,no,total){
   const title=s.title||(s.dest?s.dest+'の旅':'旅のしおり');
   const tl2=title.length>14?'xlong':title.length>9?'long':'';
   const art=s.coverMode==='photo'&&s.cover?`<img class="photo" src="${s.cover}" alt="">`:`<img class="ic n${s.icons.length}" src="${iconsImg(s.icons,sc,'#fff')}" alt="">`;
-  b=`<img class="motif" src="${motifURI(s)}" alt=""><i class="deco d2"></i><i class="deco d3"></i><div class="c-k">旅のしおり</div><h1 class="c-title ${tl2}">${esc(title)}</h1><div class="c-art">${art}</div>
+  b=`<div class="c-k">旅のしおり</div><h1 class="c-title ${tl2}">${esc(title)}</h1><div class="c-art">${art}</div>
   <div><div class="kv"><span>行き先</span><b>${esc(s.dest)||'&nbsp;'}</b></div><div class="kv"><span>日にち</span><b>${dateRange(s)||'&nbsp;'}</b></div><div class="kv"><span>作った人</span><b>${esc(s.author)||'&nbsp;'}</b></div></div>`;
  }else if(/^d\d$/.test(key)){
   const i=+key.slice(1),its=s.days[i].items.filter(x=>x.place.trim()||x.what.trim()||x.time).slice(0,L.sch);
@@ -684,13 +665,15 @@ function onImport(inp){const f=inp.files&&inp.files[0];if(!f)return;const rd=new
 const A={
  new(){const s=norm({author:db.lastAuthor||'',theme:db.theme});s.updated=Date.now();db.list.push(s);save(true);curId=s.id;dirty();go('edit',0)},
  open(b){curId=b.dataset.id;dirty();go('edit',0)},
- copy(b){const o=db.list.find(x=>x.id===b.dataset.id);if(!o)return;const s=norm(JSON.parse(JSON.stringify(o)));s.id=uid();s.sample=false;s.title=(o.title||o.dest||'しおり')+'（コピー）';s.updated=Date.now();db.list.push(s);save(true);render();toast('コピーしました')},
+ copy(b){const o=db.list.find(x=>x.id===b.dataset.id);if(!o)return;const s=norm(JSON.parse(JSON.stringify(o)));s.id=uid();s.sample=false;delete s.sv;delete s.own;s.title=(o.title||o.dest||'しおり')+'（コピー）';s.updated=Date.now();db.list.push(s);save(true);render();toast('コピーしました')},
  del(b){delId=b.dataset.id;render()},
  hintDone(){db.hintDone=true;save(true);render()},
- fromSample(b){const o=db.list.find(x=>x.id===b.dataset.id);if(!o)return;const s=norm(JSON.parse(JSON.stringify(o)));s.id=uid();s.sample=false;delete s.sv;s.made=today();s.author=db.lastAuthor||'';s.theme=db.theme;s.updated=Date.now();db.list.push(s);save(true);curId=s.id;dirty();go('edit',0);toast('見本をもとに新しいしおりを作りました')},
+ fromSample(b){const o=db.list.find(x=>x.id===b.dataset.id);if(!o)return;const s=norm(JSON.parse(JSON.stringify(o)));s.id=uid();s.sample=false;delete s.sv;delete s.own;s.made=today();s.author=db.lastAuthor||'';s.theme=db.theme;s.updated=Date.now();db.list.push(s);save(true);curId=s.id;dirty();go('edit',0);toast('見本をもとに新しいしおりを作りました')},
  togglePast(){db.showPast=!db.showPast;save(true);render()},
  delYes(){db.list=db.list.filter(x=>x.id!==delId);delId=null;save(true);render()},
  delNo(){delId=null;render()},
+ resetAsk(){resetAsk=true;render()},resetNo(){resetAsk=false;render()},
+ resetYes(){resetAsk=false;const i=db.list.findIndex(x=>x.sample);const n=sample();if(i>=0)db.list[i]=n;else db.list.unshift(n);save(true);render();toast('見本を最初の内容に戻しました')},
  home(){delId=null;go('home')},
  step(b){go('edit',+b.dataset.i)},
  next(){go('edit',Math.min(5,step+1))},
