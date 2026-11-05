@@ -1,4 +1,4 @@
-const C='shiorilab-v3';
+const C='shiorilab-v4';
 const CORE=['./','index.html','manifest.webmanifest','si1-32.png','si1-180.png','si1-192.png','si1-512.png','si1-512-maskable.png'];
 const EXT=[
   'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
@@ -9,7 +9,7 @@ const FONT_CSS=EXT[2];
 const EXT_HOSTS=['cdnjs.cloudflare.com','fonts.googleapis.com','fonts.gstatic.com'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(C).then(async c=>{
-    await c.addAll(CORE);
+    await c.addAll(CORE.map(u=>new Request(u,{cache:'reload'})));
     await Promise.all(EXT.map(u=>fetch(u,{mode:'cors'}).then(r=>{if(r.ok)return c.put(u,r)}).catch(()=>{})));
   }).then(()=>self.skipWaiting()));
 });
@@ -21,7 +21,7 @@ self.addEventListener('fetch',e=>{
   const u=new URL(r.url);
   if(u.origin===location.origin){
     if(u.searchParams.has('vc'))return;
-    e.respondWith(fetch(r).then(res=>{if(res.ok){const c=res.clone();caches.open(C).then(x=>x.put(r,c))}return res})
+    e.respondWith(fetch(r.url,{cache:'no-cache',credentials:'same-origin'}).then(res=>{if(res.ok){const c=res.clone();caches.open(C).then(x=>x.put(r,c))}return res})
       .catch(()=>caches.match(r,{ignoreSearch:true}).then(m=>m||(r.mode==='navigate'?caches.match('index.html'):Response.error()))));
     return;
   }
