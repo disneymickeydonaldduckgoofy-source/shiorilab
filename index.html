@@ -106,6 +106,14 @@ input[type=date],input[type=time]{min-height:50px}
 .prow{display:grid;grid-template-columns:7.4em minmax(0,1fr) 40px;gap:6px;padding:10px;background:var(--soft);border-radius:16px}
 .prow input{padding:9px 10px;font-size:16px}
 .prow .w2{grid-column:1/3}
+.pic{grid-column:3;border:2px dashed var(--line);background:#fff;border-radius:12px;font-size:12px;font-weight:900;color:var(--sub);padding:0;display:flex;align-items:center;justify-content:center;min-height:40px}.pic.on{border-style:solid;border-color:var(--acc);background:var(--acc-l)}.pic img{width:28px;height:28px}
+.icpick{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;padding:8px;background:var(--soft);border:2px solid var(--line);border-radius:14px}
+.ib.sm{padding:4px 0;font-size:10px;border-radius:10px;letter-spacing:0;white-space:nowrap}.ib.sm img{width:28px;height:28px}.ib.sm.none{align-content:center;font-size:12px}
+.selw{display:grid;gap:8px;margin-bottom:12px}.selw>span{font-weight:900;font-size:15px}.selw small{display:block;font-size:12px;font-weight:700;color:var(--sub)}
+.selrow{display:flex;gap:12px;padding-top:6px}
+.sel{position:relative;width:58px;height:58px;border:2px solid var(--acc);background:var(--acc-l);border-radius:14px;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab;transition:transform .12s,box-shadow .12s}
+.sel img{width:40px;height:40px;pointer-events:none}.sel b{position:absolute;top:-8px;left:-8px;width:22px;height:22px;border-radius:50%;background:var(--acc);color:var(--acc-on);font-size:12px;display:flex;align-items:center;justify-content:center}
+.sel.drag{transform:scale(1.15);box-shadow:0 8px 16px rgba(0,0,0,.2);z-index:2;cursor:grabbing}.selrow.dragging .sel:not(.drag){opacity:.65}
 .x{width:40px;height:40px;border-radius:12px;border:0;background:#F6EBDA;color:var(--sub);font-size:20px;font-weight:900;line-height:1;align-self:center}
 .add{border:2px dashed var(--acc);background:var(--soft);color:var(--acc-d);border-radius:16px;padding:12px;font-weight:900;font-size:16px}
 .add[disabled]{opacity:.4}
@@ -206,10 +214,11 @@ body.typing .navb{display:none}
 .kv span{flex:none;width:4.4em;font-size:.82em;color:var(--td);font-weight:700}
 .kv b{font-size:1.12em;font-weight:700;min-width:0}
 .sch{flex:1 1 0;min-height:0;display:grid;grid-auto-rows:1fr;position:relative}
-.sch::before{content:"";position:absolute;left:4.39em;top:1em;bottom:1em;width:.22em;background:var(--tl)}
-.r{position:relative;display:grid;grid-template-columns:3.8em 1.4em minmax(0,1fr);align-items:start;padding-top:.3em;min-height:0;overflow:hidden}
+.sch::before{content:"";position:absolute;left:4.69em;top:1em;bottom:1em;width:.22em;background:var(--tl)}
+.r{position:relative;display:grid;grid-template-columns:3.8em 2em minmax(0,1fr);align-items:start;padding-top:.3em;min-height:0;overflow:hidden}
 .tm{font-weight:900;color:var(--td);font-size:1.05em;text-align:right;font-variant-numeric:tabular-nums;line-height:1.4}
 .dt{display:flex;justify-content:center}
+.dt .di{flex:none;display:block;width:1.75em;height:1.75em;margin-top:-.08em;border-radius:50%;background:#fff}.dt .di img{display:block;width:100%;height:100%}
 .dt i{width:.8em;height:.8em;border-radius:50%;background:var(--t);margin-top:.33em;display:block}
 .tx{min-width:0;padding-left:.2em}
 .tx b{display:block;font-size:1.1em;font-weight:700;line-height:1.3}
@@ -393,7 +402,7 @@ function norm(o){
  const s=Object.assign({id:uid(),made:today(),title:'',dest:'',start:'',nights:1,stay:'',author:'',members:'',theme:'yuzu',icon:'car',icons:null,cover:'',coverMode:'icon',format:'a5',days:[],research:[],quiz:{},items:[],budget:'',wants:[],promises:[],itemCat:{},sample:false},o||{});
  if(!s.itemCat||typeof s.itemCat!=='object'||Array.isArray(s.itemCat))s.itemCat={};
  s.items=renArr(s.items);s.promises=renArr(s.promises);for(const k in s.itemCat)if(REN[k]){s.itemCat[REN[k]]=s.itemCat[k];delete s.itemCat[k]}
- s.days=[0,1,2,3].map(i=>({items:((s.days[i]||{}).items||[]).map(x=>({time:x.time||'',place:x.place||'',what:x.what||''}))}));
+ s.days=[0,1,2,3].map(i=>({items:((s.days[i]||{}).items||[]).map(x=>({time:x.time||'',place:x.place||'',what:x.what||'',ic:MARK_SET.has(x.ic)?x.ic:''}))}));
  s.research=[0,1,2].map(i=>s.research[i]||'');
  s.researchSrc=[0,1,2].map(i=>(s.researchSrc||[])[i]||'');
  s.quiz={q:s.quiz.q||'',c:[0,1,2].map(i=>(s.quiz.c||[])[i]||''),a:+s.quiz.a||0};
@@ -404,9 +413,9 @@ function norm(o){
  if(!LIM[s.format])s.format='a5';
  return s;
 }
-function sample(){return norm({id:'sample',sample:true,sv:6,made:'2026-11-05',title:'新冠温泉の旅',dest:'新冠温泉',start:'2026-11-07',nights:1,stays:['新冠温泉 ホテルヒルズ'],author:'見本',members:'パパ、ママ、私',theme:'yuzu',icons:['onsen','animal','car'],
- days:[{items:[{time:'08:00',place:'家',what:'車で出発'},{time:'09:15',place:'道の駅 むかわ四季の館',what:''},{time:'09:50',place:'おひさま牧場',what:'ミニチュアホースとふれあう'},{time:'10:40',place:'レストランメルシー',what:'昼ごはん（オムライス・ハンバーグ）'},{time:'12:45',place:'太陽の森ディマシオ美術館',what:'美術館とガラスの美術館を見る'},{time:'14:30',place:'道の駅 サラブレッドロード新冠',what:'馬グッズ・ピーマンソフト'},{time:'14:55',place:'新冠温泉 ホテルヒルズ',what:'着く（チェックイン 15:00）'}]},
-  {items:[{time:'10:00',place:'新冠温泉 ホテルヒルズ',what:'チェックアウトして出発'},{time:'11:35',place:'道の駅あびらD51ステーション',what:'SLの展示・ポッポらんど'},{time:'12:00',place:'東千歳バーベキュー',what:'昼ごはん（バーベキュー）'},{time:'13:15',place:'道の駅 マオイの丘公園',what:'展望台'},{time:'14:05',place:'ゆめっく館',what:'図書館・資料館'},{time:'15:50',place:'家',what:'到着'}]}],
+function sample(){return norm({id:'sample',sample:true,sv:7,made:'2026-11-05',title:'新冠温泉の旅',dest:'新冠温泉',start:'2026-11-07',nights:1,stays:['新冠温泉 ホテルヒルズ'],author:'見本',members:'パパ、ママ、私',theme:'yuzu',icons:['onsen','animal','car'],
+ days:[{items:[{time:'08:00',place:'家',what:'車で出発',ic:'car'},{time:'09:15',place:'道の駅 むかわ四季の館',what:''},{time:'09:50',place:'おひさま牧場',what:'ミニチュアホースとふれあう',ic:'animal'},{time:'10:40',place:'レストランメルシー',what:'昼ごはん（オムライス・ハンバーグ）'},{time:'12:45',place:'太陽の森ディマシオ美術館',what:'美術館とガラスの美術館を見る'},{time:'14:30',place:'道の駅 サラブレッドロード新冠',what:'馬グッズ・ピーマンソフト',ic:'soft'},{time:'14:55',place:'新冠温泉 ホテルヒルズ',what:'着く（チェックイン 15:00）',ic:'onsen'}]},
+  {items:[{time:'10:00',place:'新冠温泉 ホテルヒルズ',what:'チェックアウトして出発'},{time:'11:35',place:'道の駅あびらD51ステーション',what:'SLの展示・ポッポらんど',ic:'train'},{time:'12:00',place:'東千歳バーベキュー',what:'昼ごはん（バーベキュー）'},{time:'13:15',place:'道の駅 マオイの丘公園',what:'展望台',ic:'mountain'},{time:'14:05',place:'ゆめっく館',what:'図書館・資料館'},{time:'15:50',place:'家',what:'到着',ic:'car'}]}],
  researchSrc:['net','net','book'],research:['太陽の森ディマシオ美術館には、高さ9m・幅27mの大きな油絵がある。','道の駅あびらD51ステーションには、本物のSL（D51形）が展示されている。','ミニチュアホースは、大人になっても背の高さが1mより低い小さな馬。'],
  quiz:{q:'ディマシオ美術館の大きな絵の高さは？',c:['3m','9m','27m'],a:1},
  items:['ハンカチ','ティッシュ','財布','水筒','着替え','パジャマ','上着','手袋','タオル','歯ブラシ','絆創膏','酔い止め','カメラ','色鉛筆','トランプ'],itemCat:{'トランプ':4},
@@ -415,13 +424,13 @@ let db={list:[]};
 function load(){try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&Array.isArray(j.list))db={...j,list:j.list.map(norm)};}catch(e){}
  if(!db.customItems||typeof db.customItems!=='object')db.customItems={};
  if(!TH[db.theme])db.theme='yuzu';
- db.list=db.list.map(x=>x.id==='sample'&&x.sample&&(x.sv||0)<6?sample():x);
+ db.list=db.list.map(x=>x.id==='sample'&&x.sample&&(x.sv||0)<7?sample():x);
  if(!db.seeded){db.list.push(sample());db.seeded=true;save(true);}}
 let saveT=0;
 function save(now){clearTimeout(saveT);const go=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('保存できませんでした。表紙の写真をやめるか、要らないしおりを消してね')}};now?go():(saveT=setTimeout(go,300))}
 
 /* ---------- state ---------- */
-let view='home',curId=null,step=0,delId=null,lastPdf=null,lastSheets=null,deferredInstall=null,canShareFiles=false;
+let view='home',curId=null,step=0,delId=null,pickRow=null,lp=null,lastPdf=null,lastSheets=null,deferredInstall=null,canShareFiles=false;
 try{canShareFiles=!!(navigator.canShare&&navigator.canShare({files:[new File(['x'],'a.pdf',{type:'application/pdf'})]}))}catch(e){}
 const cur=()=>db.list.find(x=>x.id===curId);
 function dirty(){lastPdf=null;lastSheets=null}
@@ -478,14 +487,14 @@ function stepCover(s){
  ${s.coverMode==='photo'?`<p class="note">紙に描いた絵をスマホで撮って使えるよ。</p>
  ${s.cover?`<div class="photo-prev"><img src="${s.cover}" alt="表紙の写真"><button class="btn ghost" data-act="photoDel">写真をやめる</button></div>`:''}
  <label class="pick btn ${s.cover?'ghost':''}">${s.cover?'写真を変える':'写真を選ぶ'}<input type="file" accept="image/*" data-photo id="f-photo"></label>`
- :`<div class="icons">${MARKS.map(([k,n])=>`<button class="ib ${s.icons.includes(k)?'on':''}" data-act="icon" data-v="${k}" aria-pressed="${s.icons.includes(k)}"><img src="${icon(k,t,tl)}" alt="">${n}</button>`).join('')}</div>`}
+ :`${s.icons.length>1?`<div class="selw"><span>表紙に入る順<small>長押しして動かすと、順番を変えられるよ</small></span><div class="selrow">${s.icons.map((k,i)=>`<div class="sel" data-k="${k}"><b>${i+1}</b><img src="${icon(k,t,tl)}" alt="" draggable="false"></div>`).join('')}</div></div>`:''}<div class="icons">${MARKS.map(([k,n])=>`<button class="ib ${s.icons.includes(k)?'on':''}" data-act="icon" data-v="${k}" aria-pressed="${s.icons.includes(k)}"><img src="${icon(k,t,tl)}" alt="">${n}</button>`).join('')}</div>`}
  </div>`;
 }
 function stepPlan(s){
- const nd=s.nights+1,L=LIM[s.format];let h='';
+ const nd=s.nights+1,L=LIM[s.format],V=th(),t=stC(V),tl=V[2];let h='';
  for(let d=0;d<nd;d++){const its=s.days[d].items;
   h+=`<div class="card"><h3>${nd>1?(d+1)+'日目':'予定'}<small>${dayDate(s,d)}</small></h3>
-  ${its.map((x,i)=>`<div class="prow"><input type="time" id="f-d${d}t${i}" data-f="days.${d}.items.${i}.time" value="${esc(x.time)}" aria-label="時間"><input type="text" id="f-d${d}p${i}" data-f="days.${d}.items.${i}.place" value="${esc(x.place)}" placeholder="場所" aria-label="場所" autocomplete="off"><button class="x" data-act="delRow" data-d="${d}" data-i="${i}" aria-label="この予定を消す">×</button><input type="text" class="w2" id="f-d${d}w${i}" data-f="days.${d}.items.${i}.what" value="${esc(x.what)}" placeholder="やること（なくてもOK）" aria-label="やること" autocomplete="off"></div>`).join('')}
+  ${its.map((x,i)=>`<div class="prow"><input type="time" id="f-d${d}t${i}" data-f="days.${d}.items.${i}.time" value="${esc(x.time)}" aria-label="時間"><input type="text" id="f-d${d}p${i}" data-f="days.${d}.items.${i}.place" value="${esc(x.place)}" placeholder="場所" aria-label="場所" autocomplete="off"><button class="x" data-act="delRow" data-d="${d}" data-i="${i}" aria-label="この予定を消す">×</button><button class="pic ${x.ic?'on':''}" data-act="pickIc" data-d="${d}" data-i="${i}" aria-label="絵を付ける" aria-expanded="${pickRow===d+'-'+i}">${x.ic?`<img src="${icon(x.ic,t,tl)}" alt="">`:'絵'}</button><input type="text" class="w2" id="f-d${d}w${i}" data-f="days.${d}.items.${i}.what" value="${esc(x.what)}" placeholder="やること（なくてもOK）" aria-label="やること" autocomplete="off"></div>${pickRow===d+'-'+i?`<div class="icpick">${MARKS.map(([k,n])=>`<button class="ib sm ${x.ic===k?'on':''}" data-act="setIc" data-d="${d}" data-i="${i}" data-v="${k}"><img src="${icon(k,t,tl)}" alt="">${n}</button>`).join('')}<button class="ib sm none" data-act="setIc" data-d="${d}" data-i="${i}" data-v="">なし</button></div>`:''}`).join('')}
   <div class="btn2"><button class="add" data-act="addRow" data-d="${d}" ${its.length>=LIM.a5.sch?'disabled':''}>＋ 予定を増やす</button>${its.length>1?`<button class="add sub" data-act="sortRows" data-d="${d}">時間順に並べる</button>`:''}</div>
   <p class="cnt ${its.length>L.sch?'warn':''}">${its.length} / ${L.sch}${its.length>L.sch?'　ミニブックでは'+L.sch+'個まで印刷されます':''}</p></div>`;}
  return h+`<p class="note">時間が分からない予定は、時間を空けたままでOK。空いた行は、印刷した後に手で書けるよ。</p>`;
@@ -564,7 +573,7 @@ function pageHTML(s,key,mode,no,total){
   <div><div class="kv"><span>行き先</span><b>${esc(s.dest)||'&nbsp;'}</b></div><div class="kv"><span>日にち</span><b>${dateRange(s)||'&nbsp;'}</b></div><div class="kv"><span>作った人</span><b>${esc(s.author)||'&nbsp;'}</b></div></div>`;
  }else if(/^d\d$/.test(key)){
   const i=+key.slice(1),its=s.days[i].items.filter(x=>x.place.trim()||x.what.trim()||x.time).slice(0,L.sch);
-  const rows=its.map(x=>`<div class="r"><div class="tm">${esc(fmtT(x.time))}</div><div class="dt"><i></i></div><div class="tx"><b>${esc(x.place)||'&nbsp;'}</b>${x.what.trim()?`<small>${esc(x.what)}</small>`:''}</div></div>`).join('')+'<div class="r blank"><div class="tm"></div><div class="dt"><i></i></div><div class="tx"></div></div>'.repeat(L.sch-its.length);
+  const rows=its.map(x=>`<div class="r"><div class="tm">${esc(fmtT(x.time))}</div><div class="dt">${x.ic?`<span class="di"><img src="${icon(x.ic,sc,tl)}" alt=""></span>`:'<i></i>'}</div><div class="tx"><b>${esc(x.place)||'&nbsp;'}</b>${x.what.trim()?`<small>${esc(x.what)}</small>`:''}</div></div>`).join('')+'<div class="r blank"><div class="tm"></div><div class="dt"><i></i></div><div class="tx"></div></div>'.repeat(L.sch-its.length);
   b=head(s.nights?(i+1)+'日目の予定':'予定',dayDate(s,i))+`<div class="sch">${rows}</div>`+(i<s.nights&&s.stays[i].trim()?`<div class="stay"><span>泊まるところ</span><b>${esc(s.stays[i])}</b></div>`:'');
  }else if(key==='map'){
   b=head('道のりマップ')+`<p class="mhint">家から${esc(s.dest||'行き先')}までの道を絵で描こう。通った町や、見えた物も書いてね。</p><div class="mapbox"><span class="mk goal"><img src="${icon('flag',sc,tl)}" alt="">${esc(s.dest||'行き先')}</span><span class="mk home"><img src="${icon('house',sc,tl)}" alt="">家</span></div>`;
@@ -643,7 +652,7 @@ function render(){
 }
 function sizePreviews(){if(zi>=0)sizeZoom();document.querySelectorAll('.pvz').forEach(z=>{const box=z.parentElement,pg=z.firstElementChild;if(!pg)return;z.style.zoom=box.clientWidth/pg.offsetWidth})}
 addEventListener('resize',()=>{clearTimeout(sizePreviews.t);sizePreviews.t=setTimeout(sizePreviews,150)});
-function go(v,st){view=v;if(st!==undefined)step=st;render();window.scrollTo(0,0)}
+function go(v,st){view=v;pickRow=null;if(st!==undefined)step=st;render();window.scrollTo(0,0)}
 function setPath(o,path,val){const k=path.split('.');let x=o;for(let i=0;i<k.length-1;i++)x=x[k[i]];x[k[k.length-1]]=val}
 function onPhoto(inp){
  const f=inp.files&&inp.files[0];if(!f)return;const url=URL.createObjectURL(f),im=new Image();
@@ -672,14 +681,16 @@ const A={
  next(){go('edit',Math.min(5,step+1))},
  prev(){go('edit',Math.max(0,step-1))},
  nights(b){const s=cur();s.nights=+b.dataset.v;if(s.nights>1&&s.format==='mini'){s.format='a5';toast('3日以上の旅は、A5の本で作ります')}touch(s);render()},
- sortRows(b){const s=cur(),d=+b.dataset.d,lead=[],gs=[];let g=null;s.days[d].items.forEach(x=>{if(x.time){g={t:x.time,rows:[x]};gs.push(g)}else(g?g.rows:lead).push(x)});gs.sort((a,c)=>a.t.localeCompare(c.t));s.days[d].items=[...lead,...gs.flatMap(x=>x.rows)];touch(s);render();toast('時間順に並べました')},
+ sortRows(b){pickRow=null;const s=cur(),d=+b.dataset.d,lead=[],gs=[];let g=null;s.days[d].items.forEach(x=>{if(x.time){g={t:x.time,rows:[x]};gs.push(g)}else(g?g.rows:lead).push(x)});gs.sort((a,c)=>a.t.localeCompare(c.t));s.days[d].items=[...lead,...gs.flatMap(x=>x.rows)];touch(s);render();toast('時間順に並べました')},
  exportAll(){try{const name='しおりラボ_バックアップ_'+today().replace(/-/g,'')+'.json',url=URL.createObjectURL(new Blob([JSON.stringify({app:'shiorilab',v:1,exported:new Date().toISOString(),list:db.list,customItems:db.customItems,theme:db.theme})],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);toast('書き出しました（ダウンロードの中にあるよ）')}catch(e){toast('書き出せませんでした')}},
  coverMode(b){const s=cur();s.coverMode=b.dataset.v;touch(s);render()},
+ pickIc(b){const k=b.dataset.d+'-'+b.dataset.i;pickRow=pickRow===k?null:k;render()},
+ setIc(b){const s=cur(),x=s.days[+b.dataset.d].items[+b.dataset.i];if(x)x.ic=b.dataset.v||'';pickRow=null;touch(s);render()},
  icon(b){const s=cur(),k=b.dataset.v,i=s.icons.indexOf(k);if(i>=0){if(s.icons.length===1){toast('1つは選んでね');return}s.icons.splice(i,1)}else{if(s.icons.length>=ICON_MAX){toast('表紙の絵は'+ICON_MAX+'つまでだよ');return}s.icons.push(k)}s.icon=s.icons[0];touch(s);render()},
  theme(b){db.theme=b.dataset.v;save(true);render()},
  photoDel(){const s=cur();s.cover='';touch(s);render()},
- addRow(b){const s=cur(),d=+b.dataset.d;s.days[d].items.push({time:'',place:'',what:''});touch(s);render();const its=s.days[d].items;setTimeout(()=>{const e=document.getElementById('f-d'+d+'t'+(its.length-1));if(e)e.scrollIntoView({block:'center'})},30)},
- delRow(b){const s=cur();s.days[+b.dataset.d].items.splice(+b.dataset.i,1);touch(s);render()},
+ addRow(b){const s=cur(),d=+b.dataset.d;pickRow=null;s.days[d].items.push({time:'',place:'',what:''});touch(s);render();const its=s.days[d].items;setTimeout(()=>{const e=document.getElementById('f-d'+d+'t'+(its.length-1));if(e)e.scrollIntoView({block:'center'})},30)},
+ delRow(b){const s=cur();pickRow=null;s.days[+b.dataset.d].items.splice(+b.dataset.i,1);touch(s);render()},
  src(b){const s=cur(),i=+b.dataset.i;s.researchSrc[i]=s.researchSrc[i]===b.dataset.v?'':b.dataset.v;touch(s);render()},
  quizA(b){const s=cur();s.quiz.a=+b.dataset.i;touch(s);render()},
  addItem(b){const s=cur(),v=b.dataset.v;if(!s.items.includes(v))s.items.push(v);if(!SUG_SET.has(v)&&db.customItems[v]!=null)s.itemCat[v]=db.customItems[v];touch(s);render()},
@@ -696,6 +707,11 @@ const A={
  download(){downloadPdf()},
  install(){if(!deferredInstall)return;deferredInstall.prompt();deferredInstall.userChoice.finally(()=>{deferredInstall=null;render()})},
 };
+document.addEventListener('pointerdown',e=>{const el=e.target.closest&&e.target.closest('.sel');if(!el)return;const row=el.parentElement,o={el,row,id:e.pointerId,x:e.clientX,y:e.clientY,on:false};o.t=setTimeout(()=>{if(lp!==o)return;o.on=true;el.classList.add('drag');row.classList.add('dragging');try{navigator.vibrate&&navigator.vibrate(15)}catch(_){}} ,300);lp=o});
+document.addEventListener('pointermove',e=>{if(!lp||e.pointerId!==lp.id)return;if(!lp.on){if(Math.hypot(e.clientX-lp.x,e.clientY-lp.y)>10){clearTimeout(lp.t);lp=null}return}e.preventDefault();const el=lp.el,others=[...lp.row.children].filter(x=>x!==el);let i=others.findIndex(x=>{const r=x.getBoundingClientRect();return e.clientX<r.left+r.width/2});const ref=i<0?null:others[i];if(el.nextElementSibling!==ref)lp.row.insertBefore(el,ref)},{passive:false});
+const lpEnd=e=>{if(!lp||e.pointerId!==lp.id)return;clearTimeout(lp.t);const o=lp;lp=null;if(!o.on)return;const s=cur(),order=[...o.row.children].map(x=>x.dataset.k);if(s&&order.length===s.icons.length){s.icons=order;s.icon=order[0];touch(s)}render()};
+document.addEventListener('pointerup',lpEnd);document.addEventListener('pointercancel',lpEnd);
+document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('.sel'))e.preventDefault()});
 document.addEventListener('click',e=>{if(zi>=0&&e.target.matches('#zoom,.zin,.zbox')){closeZoom();return}const b=e.target.closest('[data-act]');if(!b||b.disabled)return;const fn=A[b.dataset.act];if(fn){e.preventDefault();fn(b)}});
 document.addEventListener('input',e=>{const t=e.target;
  if(t.dataset.f!==undefined){const s=cur();if(!s)return;setPath(s,t.dataset.f,t.value);if(t.dataset.f==='author')db.lastAuthor=t.value;touch(s);
