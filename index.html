@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F5B800">
-<meta name="shiori-version" content="20261105153935">
+<meta name="shiori-version" content="20261105202957">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="si1-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="si1-180.png">
@@ -70,7 +70,8 @@ html{overflow-y:scroll;scrollbar-gutter:stable}
 .btn.red{background:var(--danger);color:#fff;box-shadow:0 4px 0 #A82E33}
 .hintc{background:var(--hint-bg);box-shadow:0 3px 0 var(--hint-sh)}.hl{margin:0;padding-left:1.2em;display:grid;gap:4px;font-size:15px}
 .pastbtn{display:flex;justify-content:space-between;align-items:center;border:2px solid var(--line);background:#fff;border-radius:16px;padding:12px 16px;font-weight:900;font-size:15px;color:var(--sub)}.pastbtn em{font-style:normal;font-size:13px;color:var(--acc-d)}
-.snote{grid-column:1/-1;margin:0;font-size:12px;line-height:1.5;color:var(--sub)}
+.snote{grid-column:1/-1;margin:0;font-size:12px;line-height:1.5;color:var(--sub)}.sc .rs{grid-column:1/-1;justify-self:start;font-size:13px;padding:0}
+.cpbox{background:#fff;border-radius:16px;padding:16px;display:grid;gap:10px;width:min(92vw,520px);margin:auto}.cpbox textarea{height:40vh;font-size:12px}
 .link{border:0;background:none;color:var(--acc-d);font-weight:900;font-size:15px;padding:8px 0;text-align:left;text-decoration:underline;text-underline-offset:4px}
 /* steps */
 .steps{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;padding-top:14px}
@@ -420,6 +421,7 @@ function norm(o){
  if(!LIM[s.format])s.format='a5';
  return s;
 }
+const SSV=8,FSV=9;/* SSV=最初から入っている見本の版。FSV以上の版は、直した見本も入れ替える */
 function sample(){return norm({id:'sample',sample:true,sv:8,made:'2026-11-05',title:'新冠温泉の旅',dest:'新冠温泉',start:'2026-11-07',nights:1,stays:['新冠温泉 ホテルヒルズ'],author:'見本',members:'パパ、ママ、私',theme:'yuzu',icons:['onsen','animal','car'],
  days:[{items:[{time:'08:00',place:'家',what:'車で出発',ic:'car'},{time:'09:15',place:'道の駅 むかわ四季の館',what:''},{time:'09:50',place:'おひさま牧場',what:'ミニチュアホースとふれあう',ic:'animal'},{time:'10:40',place:'レストランメルシー',what:'昼ごはん（オムライス・ハンバーグ）'},{time:'12:45',place:'太陽の森ディマシオ美術館',what:'美術館とガラスの美術館を見る'},{time:'14:30',place:'道の駅 サラブレッドロード新冠',what:'馬グッズ・ピーマンソフト',ic:'soft'},{time:'14:55',place:'新冠温泉 ホテルヒルズ',what:'着く（チェックイン 15:00）',ic:'onsen'}]},
   {items:[{time:'10:00',place:'新冠温泉 ホテルヒルズ',what:'チェックアウトして出発'},{time:'11:35',place:'道の駅あびらD51ステーション',what:'SLの展示・ポッポらんど',ic:'train'},{time:'12:00',place:'東千歳バーベキュー',what:'昼ごはん（バーベキュー）'},{time:'13:15',place:'道の駅 マオイの丘公園',what:'展望台',ic:'mountain'},{time:'14:05',place:'ゆめっく館',what:'図書館・資料館'},{time:'15:50',place:'家',what:'到着',ic:'car'}]}],
@@ -434,7 +436,7 @@ function load(){try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&
  if(!TH[db.theme])db.theme='yuzu';
  if(!db.tv){db.list.forEach(x=>{if(!x.sample)x.theme=db.theme});db.tv=1;save(true)}
  db.list.forEach(x=>{if(x.sample&&x.own===undefined)x.own=!!x.updated});
- db.list=db.list.map(x=>x.id==='sample'&&x.sample&&!x.own&&(x.sv||0)<8?sample():x);
+ db.list=db.list.map(x=>x.id==='sample'&&x.sample&&(x.sv||0)<SSV&&(!x.own||(x.sv||0)<FSV)?sample():x);
  if(!db.seeded){db.list.push(sample());db.seeded=true;save(true);}}
 let saveT=0;
 function save(now){clearTimeout(saveT);const go=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('保存できませんでした。表紙の写真をやめるか、要らないしおりを消してね')}};now?go():(saveT=setTimeout(go,300))}
@@ -470,7 +472,7 @@ function cardHTML(s){
  return `<div class="sc"><div class="ic" style="background:${tl}">${s.coverMode==='photo'&&s.cover?`<img class="ph" src="${s.cover}" alt="">`:`<img src="${icon(s.icons[0],t,tl)}" alt="">`}</div>
  <div style="min-width:0"><b>${esc(s.title||s.dest||'名前のないしおり')}</b><div class="meta">${s.sample?'<span class="tag">見本</span>':''}${statusTag(s)}<span>${dateRange(s)||'日にち未定'}</span><span class="dots" aria-label="${n}/5">${[0,1,2,3,4].map(i=>`<i class="${done(s,i)?'on':''}"></i>`).join('')}</span></div></div><span class="csw" role="img" aria-label="しおりの色：${v[3]}"><i style="--c:${v[0]};--c2:${v[6]}"></i>${v[3]}</span>
  ${delId===s.id?`<div class="conf"><span style="flex:1">${s.sample?'見本を消す？（新しいしおりは空から始まるようになるよ）':'このしおりを消す？'}</span><button class="btn red" data-act="delYes">消す</button><button class="btn ghost" data-act="delNo">やめる</button></div>`:
- `<div class="ops">${s.sample?`<button class="btn green open" data-act="fromSample" data-id="${s.id}">この見本で作る</button><button class="btn ghost" data-act="open" data-id="${s.id}">直す</button>`:`<button class="btn open" data-act="open" data-id="${s.id}">開く</button><button class="btn ghost" data-act="copy" data-id="${s.id}">コピー</button>`}<button class="btn ghost" data-act="del" data-id="${s.id}">消す</button></div>${s.sample?'<p class="snote">新しいしおりは、この見本の作った人・一緒に行く人・持ち物・約束・表紙の絵から始まるよ。</p>':''}`}</div>`;
+ `<div class="ops">${s.sample?`<button class="btn green open" data-act="fromSample" data-id="${s.id}">この見本で作る</button><button class="btn ghost" data-act="open" data-id="${s.id}">直す</button>`:`<button class="btn open" data-act="open" data-id="${s.id}">開く</button><button class="btn ghost" data-act="copy" data-id="${s.id}">コピー</button>`}<button class="btn ghost" data-act="del" data-id="${s.id}">消す</button></div>${s.sample?'<p class="snote">新しいしおりは、この見本の作った人・一緒に行く人・持ち物・約束・表紙の絵から始まるよ。</p><button class="link rs" data-act="copySample">見本の内容をコピー</button>':''}`}</div>`;
 }
 function editHTML(){
  const s=cur();
@@ -690,6 +692,9 @@ const A={
  open(b){curId=b.dataset.id;dirty();go('edit',0)},
  copy(b){const o=db.list.find(x=>x.id===b.dataset.id);if(!o)return;const s=norm(JSON.parse(JSON.stringify(o)));s.id=uid();s.sample=false;delete s.sv;delete s.own;s.title=(o.title||o.dest||'しおり')+'（コピー）';s.updated=s.ct=Date.now();db.list.push(s);save(true);render();toast('コピーしました')},
  del(b){delId=b.dataset.id;render()},
+ copySample(){const m=db.list.find(x=>x.sample);if(!m)return;const o=JSON.parse(JSON.stringify(m));delete o.cover;o.coverMode='icon';const t='しおりラボ見本:'+JSON.stringify(o);
+  const fb=()=>{const z=$('#zoom');z.hidden=false;z.innerHTML='<div class="cpbox"><b>下の文字を全部選んでコピーしてね</b><textarea readonly id="cptx"></textarea><button class="btn" data-act="zClose">閉じる</button></div>';const ta=$('#cptx');ta.value=t;ta.focus();ta.select()};
+  try{navigator.clipboard.writeText(t).then(()=>toast('コピーしました。チャットに貼り付けてね'),fb)}catch(e){fb()}},
  reloadApp(){save(true);location.reload()},
  hintDone(){db.hintDone=true;save(true);render()},
  fromSample(b){const o=db.list.find(x=>x.id===b.dataset.id);if(!o)return;const s=norm(JSON.parse(JSON.stringify(o)));s.id=uid();s.sample=false;delete s.sv;delete s.own;s.made=today();s.author=db.lastAuthor||'';s.theme=db.theme;s.updated=s.ct=Date.now();db.list.push(s);save(true);curId=s.id;dirty();go('edit',0);toast('見本をもとに新しいしおりを作りました')},
